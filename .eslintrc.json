@@ -19,6 +19,7 @@
         "semi": ["warn", "never"],
         "quotes": [2, "single"],
         "indent": ["warn", 4],
+        "new-cap": 0,
         "linebreak-style": 0,
         "jsdoc/check-access": 1, // Recommended
         "jsdoc/check-alignment": 1, // Recommended

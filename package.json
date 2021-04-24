@@ -1,0 +1,31 @@
+{
+  "name": "team4tcss450_backend",
+  "version": "1.0.0",
+  "description": "Server for chat application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SteTR/Team4TCSS450_Backend.git"
+  },
+  "author": "SteTR, Aben18",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SteTR/Team4TCSS450_Backend/issues"
+  },
+  "homepage": "https://github.com/SteTR/Team4TCSS450_Backend#readme",
+  "devDependencies": {
+    "eslint": "^7.25.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-jsdoc": "^32.3.1",
+    "eslint-plugin-prettier": "^3.4.0",
+    "nodemon": "^2.0.7",
+    "prettier": "^2.2.1"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

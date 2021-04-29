@@ -1,22 +1,31 @@
 {
-  "name": "group4-tcss450-project",
+  "name": "team4tcss450_backend",
   "version": "1.0.0",
-  "description": "TCSS 450 Project for creating a chat application",
+  "description": "Server for chat application",
   "main": "index.js",
+  "scripts": {
+    "start": "nodemon node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/H3nRyL/Team4TCSS450_Backend/tree/register-henry"
+    "url": "git+https://github.com/SteTR/Team4TCSS450_Backend.git"
   },
-  "scripts": {
-    "test": "index.js"
-  },
-  "keywords": [
-    "TCSS450",
-    "Mobile",
-    "Apps"
-  ],
   "author": "TCSS 450 Group 4",
-  "license": "MIT",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SteTR/Team4TCSS450_Backend/issues"
+  },
+  "homepage": "https://github.com/SteTR/Team4TCSS450_Backend#readme",
+  "devDependencies": {
+    "eslint": "^7.25.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-jsdoc": "^32.3.1",
+    "eslint-plugin-prettier": "^3.4.0",
+    "nodemon": "^2.0.7",
+    "prettier": "^2.2.1"
+  },
   "dependencies": {
     "express": "^4.17.1",
     "form-data": "^3.0.0",

@@ -1,9 +1,9 @@
-//express is the framework we're going to use to handle requests
+// express is the framework we're going to use to handle requests
 const express = require('express')
-//Create a new instance of express
+// Create a new instance of express
 const app = express()
 
-//Access the connection to Heroku Database
+// Access the connection to Heroku Database
 const pool = require('./utilities').pool
 
 let middleware = require('./middleware')
@@ -19,26 +19,22 @@ app.use(express.json())
  */
 app.use(middleware.jsonErrorInBody)
 
-app.use('/auth', require('./routes/register.js'))
+app.use('/auth', require('./routes/register'))
+app.use('/auth', require('./routes/signin'))
 
 /*
- * Return HTML for the / end point. 
+ * Return HTML for the / end point.
  * This is a nice location to document your web service API
- * Create a web page in HTML/CSS and have this end point return it. 
+ * Create a web page in HTML/CSS and have this end point return it.
  * Look up the node module 'fs' ex: require('fs');
  */
-app.get("/", (request, response) => {
+app.get('/', (request, response) => {
+    // this is a Web page so set the content-type to HTML
+    response.send('TCSS 450 Team 4 Spring 2021 Backend ' +
+    'Hey! You shouldn\'t be here!').status(200)
+})
 
-    //this is a Web page so set the content-type to HTML
-    response.writeHead(200, {'Content-Type': 'text/html'});
-    for (i = 1; i < 7; i++) {
-        //write a response to the client
-        response.write('<h' + i + ' style="color:blue">Hello World!</h' + i + '>'); 
-    }
-    response.end(); //end the response
-});
-
-/* 
+/*
 * Heroku will assign a port you can use via the 'PORT' environment variable
 * To access an environment variable, use process.env.<ENV>
 * If there isn't an environment variable, process.env.PORT will be null (or undefined)
@@ -49,5 +45,5 @@ app.get("/", (request, response) => {
 * if(port == null) {port = 5000} 
 */ 
 app.listen(process.env.PORT || 5000, () => {
-    console.log("Server up and running on port: " + (process.env.PORT || 5000));
-});
+    console.log('Server up and running on port: ' + (process.env.PORT || 5000))
+})

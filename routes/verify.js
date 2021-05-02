@@ -17,7 +17,7 @@ router.get('/', (request, response) => {
         .then((result) => {
             response.status(201).send({
                 message: 'Hello, Welcome to our App! Thanks for signing up with our application!' +
-                'Your email has been verified. --TCSS 450 Group 4',
+                ' Your email has been verified. --TCSS 450 Group 4',
             })
         })
         .catch((error) => {

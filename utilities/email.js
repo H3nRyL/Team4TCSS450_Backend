@@ -17,7 +17,8 @@ const sendEmail = (sender, receiver, subject, message, salt) => {
         subject: subject,
         text: message,
         html: 'Hello,<br> Please Click on the link to verify your email.' +
-            '<br><a href=http://localhost:5000/verify?name='+salt+'>Click here to verify</a>',
+            '<br><a href=http://group4-tcss450-project/verify?name='+ salt +
+            '>Click here to verify</a>',
     }
 
     transporter.sendMail(mailOptions, function(error, info) {

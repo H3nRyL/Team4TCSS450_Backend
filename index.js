@@ -1,12 +1,12 @@
+/**
+ * @file main node.js file
+ */
 // express is the framework we're going to use to handle requests
 const express = require('express')
 // Create a new instance of express
 const app = express()
 
-// Access the connection to Heroku Database
-const pool = require('./utilities').pool
-
-let middleware = require('./middleware')
+const middleware = require('./middleware')
 
 /*
  * This middleware function parses JASOn in the body of POST requests
@@ -14,13 +14,14 @@ let middleware = require('./middleware')
 app.use(express.json())
 
 /*
- * This middleware function will respond to improperly formed JSON in 
+ * This middleware function will respond to improperly formed JSON in
  * request parameters.
  */
 app.use(middleware.jsonErrorInBody)
 
 app.use('/auth', require('./routes/register'))
 app.use('/auth', require('./routes/signin'))
+app.use('/verify', require('./routes/verify'))
 
 /*
  * Return HTML for the / end point.
@@ -42,8 +43,8 @@ app.get('/', (request, response) => {
 * In this case, we assign the port to be 5000 if the PORT variable isn't set
 * You can consider 'let port = process.env.PORT || 5000' to be equivalent to:
 * let port; = process.env.PORT;
-* if(port == null) {port = 5000} 
-*/ 
+* if(port == null) {port = 5000}
+*/
 app.listen(process.env.PORT || 5000, () => {
     console.log('Server up and running on port: ' + (process.env.PORT || 5000))
 })

@@ -1,3 +1,6 @@
+/**
+ * @file exports handling functions
+ */
 // Get the connection to Heroku Database
 const pool = require('./sql_conn.js')
 

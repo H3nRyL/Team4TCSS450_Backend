@@ -1,46 +1,44 @@
-var nodemailer = require('nodemailer');
-
-let sendEmail = (sender, receiver, subject, message) => {
-    //research nodemailer for sending email from node.
-    // https://nodemailer.com/about/
-    // https://www.w3schools.com/nodejs/nodejs_email.asp
-    //create a burner gmail account 
-    //make sure you add the password to the environmental variables
-    //similar to the DATABASE_URL and PHISH_DOT_NET_KEY (later section of the lab)
-
-    var transporter = nodemailer.createTransport({
+/**
+ * @file verification email handling functions
+ */
+const nodemailer = require('nodemailer')
+const sendEmail = (sender, receiver, subject, message, salt) => {
+    const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
             user: sender,
-            pass: 'tcss450project'
-    }
-    });
+            pass: 'tcss450project',
+        },
+    })
 
-    var mailOptions = {
+    const mailOptions = {
         from: sender,
         to: receiver,
         subject: subject,
-        text: message
-    };
+        text: message,
+        html: 'Hello,<br> Please Click on the link to verify your email.' +
+            '<br><a href=http://group4-tcss450-project.herokuapp.com/verify?name='+ salt +
+            '>Click here to verify</a>',
+    }
 
-    transporter.sendMail(mailOptions, function(error, info){
+    transporter.sendMail(mailOptions, function(error, info) {
         if (error) {
-            console.log(error);
+            console.log(error)
         } else {
-            console.log('Email sent: ' + info.response);
+            console.log('Email sent: ' + info.response)
         }
-    });
+    })
 
-    //fake sending an email for now. Post a message to logs. 
-    console.log("*********************************************************")
+    // Post a message to logs.
+    console.log('*********************************************************')
     console.log('To: ' + receiver)
     console.log('From: ' + sender)
     console.log('Subject: ' + subject)
-    console.log("_________________________________________________________")
+    console.log('_________________________________________________________')
     console.log(message)
-    console.log("*********************************************************")
+    console.log('*********************************************************')
 }
 
-module.exports = { 
-    sendEmail
+module.exports = {
+    sendEmail,
 }

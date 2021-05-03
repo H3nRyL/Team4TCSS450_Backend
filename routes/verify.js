@@ -14,15 +14,18 @@ const router = express.Router()
  * @api {get} /verification Request to verify a user
  * @apiName GetVerification
  * @apiGroup Verification
- * 
+ *
+ *
  * @apiQuery {string} the salt that is linked to the user
- * 
+ *
  * @apiSuccess (Success 201) {String} message to indicate user x has been verified
  * @apiError (400: Salt Error) Salt is incorrect or does not exist
+ * @apiError (400: Name Missing Error) Name is missing from the query
  */
 router.get('/', (request, response) => {
     const theQuery = 'UPDATE Members SET verification = 1 WHERE Salt=$1'
     const values = [request.query.name]
+    if (!request.query.name) response.status(400).send({message: 'name query param does not exist'})
     pool.query(theQuery, values)
         .then((result) => {
             response.status(201).send({
@@ -32,7 +35,7 @@ router.get('/', (request, response) => {
         })
         .catch((error) => {
             response.status(400).send({
-                message: 'other error, see detail',
+                message: 'other error, see detail (most likely invalid name)',
                 detail: error.detail,
             })
         })

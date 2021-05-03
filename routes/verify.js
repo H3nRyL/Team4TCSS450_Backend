@@ -28,10 +28,14 @@ router.get('/', (request, response) => {
     if (!request.query.name) response.status(400).send({message: 'name query param does not exist'})
     pool.query(theQuery, values)
         .then((result) => {
-            response.status(201).send({
-                message: 'Hello, Welcome to our App! Thanks for signing up with our application!' +
-                ' Your email has been verified. --TCSS 450 Group 4',
-            })
+            if (result.rowCount == 0) {
+                response.status(400).send({message: 'the salt is invalid'})
+            } else {
+                response.status(201).send({
+                    message: 'Hello, Welcome to our App! Thanks for signing up with our application!' +
+                    ' Your email has been verified. --TCSS 450 Group 4',
+                })
+            }
         })
         .catch((error) => {
             response.status(400).send({

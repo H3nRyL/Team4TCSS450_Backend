@@ -32,8 +32,8 @@ router.get('/', (request, response) => {
                 response.status(400).send({message: 'the salt is invalid'})
             } else {
                 response.status(201).send({
-                    message: 'Hello, Welcome to our App! Thanks for signing up with our application!' +
-                    ' Your email has been verified. --TCSS 450 Group 4',
+                    message: 'Hello, Welcome to our App! Thanks for signing up' +
+                    'with our application! Your email has been verified. --TCSS 450 Group 4',
                 })
             }
         })

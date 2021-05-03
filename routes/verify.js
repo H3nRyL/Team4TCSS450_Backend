@@ -10,6 +10,16 @@ const pool = require('../utilities').pool
 // Create a new instance of express router
 const router = express.Router()
 
+/**
+ * @api {get} /verification Request to verify a user
+ * @apiName GetVerification
+ * @apiGroup Verification
+ * 
+ * @apiQuery {string} the salt that is linked to the user
+ * 
+ * @apiSuccess (Success 201) {String} message to indicate user x has been verified
+ * @apiError (400: Salt Error) Salt is incorrect or does not exist
+ */
 router.get('/', (request, response) => {
     const theQuery = 'UPDATE Members SET verification = 1 WHERE Salt=$1'
     const values = [request.query.name]

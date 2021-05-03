@@ -13,7 +13,7 @@ const isStringProvided = validation.isStringProvided
 const generateHash = require('../utilities').generateHash
 const generateSalt = require('../utilities').generateSalt
 
-const sendEmail = require('../utilities').sendEmail
+const sendVerificationEmail = require('../utilities').sendVerificationEmail
 
 const router = express.Router()
 
@@ -61,7 +61,7 @@ router.post('/', (request, response) => {
                     success: true,
                     email: result.rows[0].email,
                 })
-                sendEmail('donotreplytcss450@gmail.com', email, 'Account Registration',
+                sendVerificationEmail(process.env.SENDER_EMAIL, email, 'Account Registration',
                     'Hello,\n\nWelcome to our App! Thanks for signing up with our application!' +
                     '\n\nHave fun, and don\'t hesitate to contact us with your feedback.' +
                     '\n\n--TCSS 450 Group 4', salt)

@@ -4,20 +4,38 @@
 const nodemailer = require('nodemailer')
 
 /**
- * 
- * 
- * @param {string} sender email of the sender 
+ * Sends a verification email to the specified receiver
+ *
  * @param {string} receiver email of the receiver
- * @param {string} subject subject text line
- * @param {string} message the contents of the message
  * @param {string} salt unique verification
  */
-function sendVerificationEmail(sender, receiver, subject, message, salt) {
+function sendVerificationEmail(receiver, salt) {
+    const html = 'Hello,<br> Please Click on the link to verify your email.' +
+    '<br><a href=http://group4-tcss450-project.herokuapp.com/verify?name=' + salt +
+    '>Click here to verify</a>'
+
+    const subject = 'Account Registration'
+    const message = 'Hello,\n\nWelcome to our App! Thanks for signing up with our application!'
+
+    sendEmail(process.env.SENDER_EMAIL, process.env.SENDER_PW, receiver, subject, message, html)
+}
+
+/**
+ * Sends an email to the receiver
+ *
+ * @param {string} sender email of sender
+ * @param {string} pw password of the sender
+ * @param {string} receiver receiver email
+ * @param {string} subject subject line of email
+ * @param {string} message message of email
+ * @param {string} html html to be sent with email
+ */
+function sendEmail(sender, pw, receiver, subject, message, html) {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
             user: sender,
-            pass: 'tcss450project',
+            pass: pw,
         },
     })
 
@@ -26,12 +44,10 @@ function sendVerificationEmail(sender, receiver, subject, message, salt) {
         to: receiver,
         subject: subject,
         text: message,
-        html: 'Hello,<br> Please Click on the link to verify your email.' +
-            '<br><a href=http://group4-tcss450-project.herokuapp.com/verify?name=' + salt +
-            '>Click here to verify</a>',
+        html: html,
     }
 
-    transporter.sendMail(mailOptions, function (error, info) {
+    transporter.sendMail(mailOptions, function(error, info) {
         if (error) {
             console.log(error)
         } else {

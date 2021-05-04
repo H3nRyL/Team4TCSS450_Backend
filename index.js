@@ -23,6 +23,8 @@ app.use('/auth', require('./routes/register'))
 app.use('/auth', require('./routes/signin'))
 app.use('/verification', require('./routes/verify'))
 
+app.use('/doc', express.static('apidoc'))
+
 /*
  * Return HTML for the / end point.
  * This is a nice location to document your web service API

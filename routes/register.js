@@ -61,10 +61,7 @@ router.post('/', (request, response) => {
                     success: true,
                     email: result.rows[0].email,
                 })
-                sendVerificationEmail(process.env.SENDER_EMAIL, email, 'Account Registration',
-                    'Hello,\n\nWelcome to our App! Thanks for signing up with our application!' +
-                    '\n\nHave fun, and don\'t hesitate to contact us with your feedback.' +
-                    '\n\n--TCSS 450 Group 4', salt)
+                sendVerificationEmail(email, salt)
             })
             .catch((error) => {
                 if (error.constraint == 'members_username_key') {

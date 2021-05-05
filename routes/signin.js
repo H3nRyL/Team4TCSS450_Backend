@@ -40,9 +40,13 @@ const config = {
  *
  * @apiError (400: Missing Authorization Header) {String} message "Missing Authorization Header"
  *
- * @apiError (400: Malformed Authorization Header) {String} message "Malformed Authorization Header"
+ * @apiError (400: Missing Authorization Header) {String} message "Missing Authorization Header"
+ *
+ * @apiError (400: Malformed Authorization Header) {String} message "Malformed Authorization Header (i.e. username and password)"
  *
  * @apiError (404: User Not Found) {String} message "User not found"
+ *
+ * @apiError (401: Not verified) {String} message "User has not been verified"
  *
  * @apiError (400: Invalid Credentials) {String} message "Credentials did not match"
  *
@@ -75,21 +79,22 @@ router.get('/',
             next()
         } else {
             response.status(400).send({
-                message: 'Malformed Authorization Header',
+                message: 'Malformed Authorization Header (i.e. username and password)',
             })
         }
     },
     // Queries DB and checks if account exists then serves user
     (request, response) => {
-        const theQuery = 'SELECT Password, Salt, MemberId FROM Members ' +
-                         'WHERE Email=$1 AND verification=1'
+        const theQuery = 'SELECT Password, Salt, MemberId, Verification FROM Members ' +
+                         'WHERE Email=$1'
         const values = [request.auth.email]
         pool.query(theQuery, values)
             .then((result) => {
                 if (result.rowCount == 0) {
-                    response.status(404).send({
-                        message: 'User not found (possibly not verified yet)',
-                    })
+                    response.status(404).send({message: 'User not found'})
+                    return
+                } else if (!result.rows[0].verification) {
+                    response.status(401).send({message: 'User has not been verified yet'})
                     return
                 }
 
@@ -129,7 +134,7 @@ router.get('/',
                 }
             })
             .catch((err) => {
-            // log the error
+                // log the error
                 console.log(err.stack)
                 response.status(400).send({
                     message: err.detail,

@@ -23,13 +23,13 @@ const router = express.Router()
  * @apiError (400: Name Missing Error) Name is missing from the query
  */
 router.get('/', (request, response) => {
-    const theQuery = 'UPDATE Members SET verification = 1 WHERE Salt=$1'
+    const theQuery = 'UPDATE Members SET verification = 1 WHERE Salt=$1' // TODO what happens if salt is the same?
     const values = [request.query.name]
     if (!request.query.name) response.status(400).send({message: 'name query param does not exist'})
     pool.query(theQuery, values)
         .then((result) => {
             if (result.rowCount == 0) {
-                response.status(400).send({message: 'the salt is invalid'})
+                response.status(400).send({message: 'the salt is invalid or does not exist'})
             } else {
                 response.status(201).send({
                     message: 'Hello, Welcome to our App! Thanks for signing up' +

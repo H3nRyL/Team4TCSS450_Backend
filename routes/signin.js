@@ -42,7 +42,8 @@ const config = {
  *
  * @apiError (400: Missing Authorization Header) {String} message "Missing Authorization Header"
  *
- * @apiError (400: Malformed Authorization Header) {String} message "Malformed Authorization Header (i.e. username and password)"
+ * @apiError (400: Malformed Authorization Header) {String} message "Malformed Authorization Header
+ *                                                                  (i.e. username and password)"
  *
  * @apiError (404: User Not Found) {String} message "User not found"
  *

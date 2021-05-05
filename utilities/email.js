@@ -11,7 +11,7 @@ const nodemailer = require('nodemailer')
  */
 function sendVerificationEmail(receiver, salt) {
     const html = 'Hello,<br> Please Click on the link to verify your email.' +
-    '<br><a href=http://group4-tcss450-project.herokuapp.com/verify?name=' + salt +
+    '<br><a href=https://production-tcss450-backend.herokuapp.com/verification?name=' + salt +
     '>Click here to verify</a>'
 
     const subject = 'Account Registration'

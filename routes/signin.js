@@ -12,11 +12,39 @@ const router = express.Router()
 // Access the connection to Heroku Database
 const pool = require('../utilities').pool
 
-const {validation, generateHash} = require('../utilities')
+const {validation, generateHash, sendVerificationEmail} = require('../utilities')
 const isStringProvided = validation.isStringProvided
 
 const config = {
     secret: process.env.JSON_WEB_TOKEN,
+}
+
+
+/**
+ * Checks to make sure the authorization header was passed correctly and contains an email
+ * and password upon decode
+ *
+ * @param {string} auth the authorization from the header that has not been decoded
+ * @throws {Error} Missing authorization header (i.e. no auth was provided)
+ * @throws {Error} Malformed authorization header (i.e. auth was not correctly provided)
+ * @return {json} email and password as json object
+ */
+async function checkSignInFormat(auth) {
+    if (!(isStringProvided(auth) && auth.startsWith('Basic '))) {
+        throw new Error('Missing Authorization Header')
+    }
+
+    const base64Credentials = auth.split(' ')[1]
+
+    const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii')
+
+    const [email, password] = credentials.split(':')
+
+    if (!(isStringProvided(email) && isStringProvided(password))) {
+        throw new Error('Malformed Authorization Header (i.e. username and password)')
+    }
+
+    return {email: email, password: password}
 }
 
 /**
@@ -53,39 +81,12 @@ const config = {
  *
  */
 router.get('/',
-    // Check if auth header exists
-    (request, response, next) => {
-        if (isStringProvided(request.headers.authorization) &&
-    request.headers.authorization.startsWith('Basic ')) {
-            next()
-        } else {
-            response.status(400).json({message: 'Missing Authorization Header'})
-        }
-    },
-    // Check if email and password are passed
-    // pass it to next function
-    (request, response, next) => {
-    // obtain auth credentials from HTTP Header
-        const base64Credentials = request.headers.authorization.split(' ')[1]
-
-        const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii')
-
-        const [email, password] = credentials.split(':')
-
-        if (isStringProvided(email) && isStringProvided(password)) {
-            request.auth = {
-                'email': email,
-                'password': password,
-            }
-            next()
-        } else {
-            response.status(400).send({
-                message: 'Malformed Authorization Header (i.e. username and password)',
-            })
-        }
-    },
     // Queries DB and checks if account exists then serves user
     (request, response) => {
+        checkSignInFormat(request.headers.authorization)
+            .then((result) => request.auth = result)
+            .catch((error) => response.status(400).json({message: error}))
+
         const theQuery = 'SELECT Password, Salt, MemberId, Verification FROM Members ' +
                          'WHERE Email=$1'
         const values = [request.auth.email]
@@ -142,5 +143,34 @@ router.get('/',
                 })
             })
     })
+
+/**
+ * @api {get} /auth/verification send the verification email again
+ *
+ * @apiError (400: Missing Authorization Header) {String} message "Missing Authorization Header"
+ *
+ * @apiError (400: Missing Authorization Header) {String} message "Missing Authorization Header"
+ *
+ * @apiError (400: Malformed Authorization Header) {String} message "Malformed Authorization Header
+ *                                                                  (i.e. username and password)"
+ *
+ * @apiError (404: User Not Found) {String} message "User not found"
+ *
+ */
+router.get('/verification', (request, response) => {
+    checkSignInFormat(request.headers.authorization)
+        .then((userInfo) => {
+            const query = 'SELECT Salt FROM Members WHERE email=$1'
+            pool.query(query, [userInfo.email]).then((result) => {
+                if (result.rowCount == 0) {
+                    response.status(404).send({message: 'User not found. Please contact the admin'})
+                    return
+                }
+                sendVerificationEmail(userInfo.email, result.rows[0].salt)
+                response.status(200).send({message: 'Verification email has been sent!'})
+            })
+        })
+        .catch((error) => response.status(400).send({message: error}))
+})
 
 module.exports = router

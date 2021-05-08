@@ -3,6 +3,9 @@
  */
 const nodemailer = require('nodemailer')
 
+// base url to access endpoints
+const url = process.env.DEV_SERVICE_URL || process.env.SERVICE_URL
+
 /**
  * Sends a verification email to the specified receiver
  *
@@ -10,9 +13,8 @@ const nodemailer = require('nodemailer')
  * @param {string} salt unique verification
  */
 function sendVerificationEmail(receiver, salt) {
-    const html = 'Hello,<br> Please Click on the link to verify your email.' +
-    '<br><a href=https://production-tcss450-backend.herokuapp.com/verification?name=' + salt +
-    '>Click here to verify</a>'
+    const html = `Hello,<br> Please Click on the link to verify your email.
+     <br><a href=${url}/verification?name=${salt}>Click here to verify</a>`
 
     const subject = 'Account Registration'
     const message = 'Hello,\n\nWelcome to our App! Thanks for signing up with our application!'

@@ -1,6 +1,7 @@
 /**
  * @file Verification endpoint
  */
+
 // express is the framework we're going to use to handle requests
 const express = require('express')
 
@@ -29,19 +30,20 @@ router.get('/', (request, response) => {
     if (!request.query.name) response.status(400).send({message: 'name query param does not exist'})
     pool.query(theQuery, values)
         .then((result) => {
-            if (result.rowCount == 0) {
-                response.status(400).send({message: 'the salt is invalid or does not exist'})
-            } else {
-                response.status(201).send({
-                    message: 'Hello, Welcome to our App! Thanks for signing up' +
-                    'with our application! Your email has been verified. --TCSS 450 Group 4',
-                })
+            if (!result.rowCount) {
+                // TODO update the failure to be more appropriate
+                // No user found with the matching salt
+                response.status(400).sendFile('verification_failure.html', {root: './data/'})
+            } else if (result.rowCount) {
+                // Successful verification
+                response.status(201).sendFile('verification_success.html', {root: './data/'})
             }
         })
         .catch((error) => {
+            console.log(error)
             response.status(400).send({
                 message: 'other error, see detail (most likely invalid name)',
-                detail: error.detail,
+                detail: error || "No error message provided",
             })
         })
 })

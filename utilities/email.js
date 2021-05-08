@@ -1,10 +1,18 @@
 /**
  * @file verification email handling functions
  */
+
+
 const nodemailer = require('nodemailer')
+
+const fs = require('fs')
+
+const handlebars = require('handlebars')
 
 // base url to access endpoints
 const url = process.env.DEV_SERVICE_URL || process.env.SERVICE_URL
+
+const appName = 'Team 4 :)'
 
 /**
  * Sends a verification email to the specified receiver
@@ -13,13 +21,20 @@ const url = process.env.DEV_SERVICE_URL || process.env.SERVICE_URL
  * @param {string} salt unique verification
  */
 function sendVerificationEmail(receiver, salt) {
-    const html = `Hello,<br> Please Click on the link to verify your email.
-     <br><a href=${url}/verification?name=${salt}>Click here to verify</a>`
+    const html = fs.readFileSync('./data/verification_email.html', {encoding: 'utf-8'})
 
-    const subject = 'Account Registration'
-    const message = 'Hello,\n\nWelcome to our App! Thanks for signing up with our application!'
+    const template = handlebars.compile(html)
 
-    sendEmail(process.env.SENDER_EMAIL, process.env.SENDER_PW, receiver, subject, message, html)
+    const verificationUrl = `${url}/verification?name=${salt}`
+
+    const htmlToSend = template({action_url: verificationUrl})
+
+    const subject = `${appName} Account Registration`
+    const message = `Hello,\n\nWelcome to our App! Thanks for signing up with our application! 
+                     Here is the verification link ${verificationUrl}`
+
+    sendEmail(process.env.SENDER_EMAIL, process.env.SENDER_PW, receiver, subject,
+        message, htmlToSend)
 }
 
 /**

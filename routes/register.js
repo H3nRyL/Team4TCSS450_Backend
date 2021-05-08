@@ -57,13 +57,14 @@ router.post('/', (request, response) => {
         const values = [first, last, username, email, saltedHash, salt]
         pool.query(theQuery, values)
             .then((result) => {
+                sendVerificationEmail(email, salt)
                 response.status(201).send({
                     success: true,
                     email: result.rows[0].email,
                 })
-                sendVerificationEmail(email, salt)
             })
             .catch((error) => {
+                console.log(error)
                 if (error.constraint == 'members_username_key') {
                     response.status(400).send({
                         message: 'Username exists',

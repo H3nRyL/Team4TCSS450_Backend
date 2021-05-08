@@ -43,7 +43,7 @@ router.get('/', (request, response) => {
             console.log(error)
             response.status(400).send({
                 message: 'other error, see detail (most likely invalid name)',
-                detail: error || "No error message provided",
+                detail: error || 'No error message provided',
             })
         })
 })

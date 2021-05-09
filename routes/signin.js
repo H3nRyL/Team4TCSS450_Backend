@@ -84,64 +84,66 @@ router.get('/',
     // Queries DB and checks if account exists then serves user
     (request, response) => {
         checkSignInFormat(request.headers.authorization)
-            .then((result) => request.auth = result)
-            .catch((error) => response.status(400).json({message: error}))
-
-        const theQuery = 'SELECT Password, Salt, MemberId, Verification FROM Members ' +
-                         'WHERE Email=$1'
-        const values = [request.auth.email]
-        pool.query(theQuery, values)
             .then((result) => {
-                if (result.rowCount == 0) {
-                    response.status(404).send({message: 'User not found'})
-                    return
-                } else if (!result.rows[0].verification) {
-                    response.status(401).send({message: 'User has not been verified yet'})
-                    return
-                }
+                // Format is valid so we progress with checking for valid email and pw
+                request.auth = result
+                const theQuery = 'SELECT Password, Salt, MemberId, Verification FROM Members ' +
+                         'WHERE Email=$1'
+                const values = [request.auth.email]
+                pool.query(theQuery, values)
+                    .then((result) => {
+                        if (result.rowCount == 0) {
+                            response.status(404).send({message: 'User not found'})
+                            return
+                        } else if (!result.rows[0].verification) {
+                            response.status(401).send({message: 'User has not been verified yet'})
+                            return
+                        }
 
-                // Retrieve the salt used to create the salted-hash provided from the DB
-                const salt = result.rows[0].salt
+                        // Retrieve the salt used to create the salted-hash provided from the DB
+                        const salt = result.rows[0].salt
 
-                // Retrieve the salted-hash password provided from the DB
-                const storedSaltedHash = result.rows[0].password
+                        // Retrieve the salted-hash password provided from the DB
+                        const storedSaltedHash = result.rows[0].password
 
-                // Generate a hash based on the stored salt and the provided password
-                const providedSaltedHash = generateHash(request.auth.password, salt)
+                        // Generate a hash based on the stored salt and the provided password
+                        const providedSaltedHash = generateHash(request.auth.password, salt)
 
-                // Did our salted hash match their salted hash?
-                if (storedSaltedHash === providedSaltedHash ) {
-                // credentials match. get a new JWT
-                    const token = jwt.sign(
-                        {
-                            'email': request.auth.email,
-                            'memberid': result.rows[0].memberid,
-                        },
-                        config.secret,
-                        {
-                            expiresIn: '60 days', // expires in 14 days
-                        },
-                    )
-                    // package and send the results
-                    response.json({
-                        success: true,
-                        message: 'Authentication successful!',
-                        token: token,
+                        // Did our salted hash match their salted hash?
+                        if (storedSaltedHash === providedSaltedHash ) {
+                            // credentials match. get a new JWT
+                            const token = jwt.sign(
+                                {
+                                    'email': request.auth.email,
+                                    'memberid': result.rows[0].memberid,
+                                },
+                                config.secret,
+                                {
+                                    expiresIn: '60 days', // expires in 14 days
+                                },
+                            )
+                            // package and send the results
+                            response.json({
+                                success: true,
+                                message: 'Authentication successful!',
+                                token: token,
+                            })
+                        } else {
+                            // credentials dod not match
+                            response.status(400).send({
+                                message: 'Credentials did not match',
+                            })
+                        }
                     })
-                } else {
-                // credentials dod not match
-                    response.status(400).send({
-                        message: 'Credentials did not match',
+                    .catch((err) => {
+                        // log the error
+                        console.log(err.stack)
+                        response.status(400).send({
+                            message: err.detail,
+                        })
                     })
-                }
             })
-            .catch((err) => {
-                // log the error
-                console.log(err.stack)
-                response.status(400).send({
-                    message: err.detail,
-                })
-            })
+            .catch((error) => response.status(400).json({message: error}))
     })
 
 /**
@@ -160,10 +162,16 @@ router.get('/',
 router.get('/verification', (request, response) => {
     checkSignInFormat(request.headers.authorization)
         .then((userInfo) => {
-            const query = 'SELECT Salt FROM Members WHERE email=$1'
+            const query = 'SELECT Salt, Verification FROM Members WHERE email=$1'
             pool.query(query, [userInfo.email]).then((result) => {
                 if (result.rowCount == 0) {
                     response.status(404).send({message: 'User not found. Please contact the admin'})
+                    return
+                }
+                // User is already verified
+                if (result.rows[0].verification) {
+                    response.status(200)
+                        .send({message: 'User has already been verified.'})
                     return
                 }
                 sendVerificationEmail(userInfo.email, result.rows[0].salt)

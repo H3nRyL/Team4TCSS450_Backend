@@ -4,6 +4,9 @@
 // express is the framework we're going to use to handle requests
 const express = require('express')
 
+// to be used to create the verification token
+const jwt = require('jsonwebtoken')
+
 // Access the connection to Heroku Database
 const pool = require('../utilities').pool
 
@@ -14,6 +17,10 @@ const generateHash = require('../utilities').generateHash
 const generateSalt = require('../utilities').generateSalt
 
 const sendVerificationEmail = require('../utilities').sendVerificationEmail
+
+const config = {
+    secret: process.env.JSON_WEB_TOKEN,
+}
 
 const router = express.Router()
 
@@ -57,7 +64,11 @@ router.post('/', (request, response) => {
         const values = [first, last, username, email, saltedHash, salt]
         pool.query(theQuery, values)
             .then((result) => {
-                sendVerificationEmail(email, salt)
+                // Create a JWT instead of passing in salt to avoid security issues
+                // includes the expiration date as well
+                const token = jwt.sign({salt: salt}, config.secret, {expiresIn: '1d'})
+
+                sendVerificationEmail(email, token)
                 response.status(201).send({
                     success: true,
                     email: result.rows[0].email,

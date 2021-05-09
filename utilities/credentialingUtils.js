@@ -26,6 +26,10 @@ const generateHash = (pw, salt) =>
 const generateSalt = (size) =>
     crypto.randomBytes(size).toString('hex')
 
+const generateVerificationJwt = (salt) => {
+    return
+}
+
 module.exports = {
-    generateHash, generateSalt,
+    generateHash, generateSalt, generateVerificationJwt,
 }

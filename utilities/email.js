@@ -18,14 +18,15 @@ const appName = 'Team 4 :)'
  * Sends a verification email to the specified receiver
  *
  * @param {string} receiver email of the receiver
- * @param {string} salt unique verification
+ * @param {string} jwt unique verification jwt to be decoded
  */
-function sendVerificationEmail(receiver, salt) {
+function sendVerificationEmail(receiver, jwt) {
     const html = fs.readFileSync('./data/verification_email.html', {encoding: 'utf-8'})
 
     const template = handlebars.compile(html)
 
-    const verificationUrl = `${url}/verification?name=${salt}`
+
+    const verificationUrl = `${url}/verification?name=${jwt}`
 
     const htmlToSend = template({action_url: verificationUrl})
 

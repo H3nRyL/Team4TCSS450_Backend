@@ -17,10 +17,15 @@ const router = express.Router()
  *
  * @apiHeader {string} authorization Valid JSON Web Token JWT
  *
- * @apiParam {number} chatId the id of th chat to insert this message into
- * @apiParam {string} message a message to store
+ * @apiParam {number} chatid the id of th chat to insert this message into NOTE: in body, not param
+ * @apiParam {string} message a message to store NOTE: in body, not param
  *
- * @apiSuccess (Success 201) {boolean} success true when the name is inserted
+ * @apiSuccess {[]} message an array of messages in json format (need to update with pushy)
+ * @apiSuccess {number} message.messageid the id of the message
+ * @apiSuccess {number} message.chatid the chat id the message bleongs to
+ * @apiSuccess {string} message.message contents of the message
+ * @apiSuccess {number} message.memberid who made the message
+ * @apiSuccess {string} message.timestamp the time the message was sent
  *
  * @apiError (400: Unknown user) {String} message "unknown email address"
  *
@@ -30,17 +35,17 @@ const router = express.Router()
  *
  * @apiError (400: Unknown Chat ID) {String} message "invalid chat id"
  *
- * @apiUse JSONError
  */
+// @apiSuccess (Success 201) {boolean} success true when the name is inserted
 router.post('/', (request, response, next) => {
     // validate on empty parameters
-    if (request.body.chatId === undefined || !isStringProvided(request.body.message)) {
+    if (request.body.chatid === undefined || !isStringProvided(request.body.message)) {
         response.status(400).send({
             message: 'Missing required information',
         })
-    } else if (isNaN(request.body.chatId)) {
+    } else if (isNaN(request.body.chatid)) {
         response.status(400).send({
-            message: 'Malformed parameter. chatId must be a number',
+            message: 'Malformed parameter. chatid must be a number',
         })
     } else {
         next()
@@ -48,7 +53,7 @@ router.post('/', (request, response, next) => {
 }, (request, response, next) => {
     // validate chat id exists
     const query = 'SELECT * FROM CHATS WHERE ChatId=$1'
-    const values = [request.body.chatId]
+    const values = [request.body.chatid]
 
     pool.query(query, values)
         .then((result) => {
@@ -68,7 +73,7 @@ router.post('/', (request, response, next) => {
 }, (request, response, next) => {
     // validate memberid exists in the chat
     const query = 'SELECT * FROM ChatMembers WHERE ChatId=$1 AND MemberId=$2'
-    const values = [request.body.chatId, request.decoded.memberid]
+    const values = [request.body.chatid, request.decoded.memberid]
     pool.query(query, values)
         .then((result) => {
             if (result.rowCount > 0) {
@@ -89,13 +94,13 @@ router.post('/', (request, response, next) => {
     const insert = `INSERT INTO Messages(ChatId, Message, MemberId)
                   VALUES($1, $2, $3) 
                   RETURNING PrimaryKey AS MessageId, ChatId, Message, MemberId, TimeStamp`
-    const values = [request.body.chatId, request.body.message, request.decoded.memberid]
+    const values = [request.body.chatid, request.body.message, request.decoded.memberid]
     pool.query(insert, values)
         .then((result) => {
             if (result.rowCount == 1) {
                 // insertion success. Attach the message to the Response obj
                 response.message = result.rows[0]
-                response.status(200).send(result)
+                response.status(200).send(result.rows)
                 // Pass on to next to push
                 next()
             } else {
@@ -114,8 +119,8 @@ router.post('/', (request, response, next) => {
     // const query = `SELECT token FROM Push_Token
     //                     INNER JOIN ChatMembers ON
     //                     Push_Token.memberid=ChatMembers.memberid
-    //                     WHERE ChatMembers.chatId=$1`
-    // const values = [request.body.chatId]
+    //                     WHERE ChatMembers.chatid=$1`
+    // const values = [request.body.chatid]
     // pool.query(query, values)
     //     .then((result) => {
     //         console.log(request.decoded.email)
@@ -136,16 +141,16 @@ router.post('/', (request, response, next) => {
 })
 
 /**
- * @api {get} /messages/:chatId?/:messageId? Request to get chat messages
+ * @api {get} /messages/:chatid?/:messageId? Request to get chat messages
  * @apiName GetMessages
  * @apiGroup Messages
  *
  * @apiDescription Request to get the 10 most recent chat messages
- * from the server in a given chat - chatId. If an optional messageId is provided,
+ * from the server in a given chat - chatid. If an optional messageId is provided,
  * return the 10 messages in the chat prior to (and not including) the message containing
  * MessageID.
  *
- * @apiParam {number} chatId the chat to look up.
+ * @apiParam {number} chatid the chat to look up.
  * @apiParam {number} messageId (Optional) return the 15 messages prior to this message
  *
  * @apiSuccess {number} rowCount the number of messages returned
@@ -157,22 +162,21 @@ router.post('/', (request, response, next) => {
  *
  * @apiError (404: ChatId Not Found) {string} message "Chat ID Not Found"
  * @apiError (400: Invalid Parameter) {string} message "Malformed parameter.
- *                                                      chatId must be a number"
+ *                                                      chatid must be a number"
  * @apiError (400: Missing Parameters) {string} message "Missing required information"
  *
  * @apiError (400: SQL Error) {string} message the reported SQL error details
  *
- * @apiUse JSONError
  */
-router.get('/:chatId?/:messageId?', (request, response, next) => {
-    // validate chatId is not empty or non-number
-    if (request.params.chatId === undefined) {
+router.get('/:chatid?/:messageId?', (request, response, next) => {
+    // validate chatid is not empty or non-number
+    if (request.params.chatid === undefined) {
         response.status(400).send({
             message: 'Missing required information',
         })
-    } else if (isNaN(request.params.chatId)) {
+    } else if (isNaN(request.params.chatid)) {
         response.status(400).send({
-            message: 'Malformed parameter. chatId must be a number',
+            message: 'Malformed parameter. chatid must be a number',
         })
     } else {
         next()
@@ -180,7 +184,7 @@ router.get('/:chatId?/:messageId?', (request, response, next) => {
 }, (request, response, next) => {
     // validate that the ChatId exists
     const query = 'SELECT * FROM CHATS WHERE ChatId=$1'
-    const values = [request.params.chatId]
+    const values = [request.params.chatid]
 
     pool.query(query, values)
         .then((result) => {
@@ -214,11 +218,11 @@ router.get('/:chatId?/:messageId?', (request, response, next) => {
                 WHERE ChatId=$1 AND Messages.PrimaryKey < $2
                 ORDER BY Timestamp DESC
                 LIMIT 15`
-    const values = [request.params.chatId, request.params.messageId]
+    const values = [request.params.chatid, request.params.messageId]
     pool.query(query, values)
         .then((result) => {
             response.send({
-                chatId: request.params.chatId,
+                chatid: request.params.chatid,
                 rowCount: result.rowCount,
                 rows: result.rows,
             })

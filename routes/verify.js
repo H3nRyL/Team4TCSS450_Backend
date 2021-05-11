@@ -36,7 +36,6 @@ const router = express.Router()
  * @apiError (400: Name Missing Error) Name is missing from the query
  */
 router.get('/', (request, response) => {
-    // TODO what happens if salt is the same?
     const theQuery = 'UPDATE Members SET verification = 1 WHERE Salt = $1'
 
     if (!request.query.name) {

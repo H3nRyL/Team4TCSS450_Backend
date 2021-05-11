@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS Members;
+-- DROP TABLE IF EXISTS Members;
 CREATE TABLE Members (MemberID SERIAL PRIMARY KEY,
                       FirstName VARCHAR(255) NOT NULL,
 		              LastName VARCHAR(255) NOT NULL,
@@ -20,7 +20,9 @@ CREATE TABLE Contacts(PrimaryKey SERIAL PRIMARY KEY,
 
 DROP TABLE IF EXISTS Chats;
 CREATE TABLE Chats (ChatID SERIAL PRIMARY KEY,
-                    Name VARCHAR(255)
+                    OwnerID INT NOT NULL,
+                    FOREIGN KEY(OwnerID) REFERENCES Members(MemberID), 
+                    GroupName VARCHAR(255)
 );
 
 DROP TABLE IF EXISTS ChatMembers;

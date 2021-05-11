@@ -119,7 +119,8 @@ router.get('/',
                                 },
                                 config.secret,
                                 {
-                                    expiresIn: '60 days', // expires in 14 days
+                                    // TODO consider a possibility of signing out or server crash
+                                    expiresIn: '365 days', // expires in 1 year
                                 },
                             )
                             // package and send the results

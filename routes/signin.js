@@ -120,6 +120,7 @@ router.get('/',
                                 config.secret,
                                 {
                                     // TODO consider a possibility of signing out or server crash
+                                    // TODO or sign out and invalidate old jwt
                                     expiresIn: '365 days', // expires in 1 year
                                 },
                             )

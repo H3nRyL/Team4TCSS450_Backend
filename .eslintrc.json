@@ -35,7 +35,7 @@
         "jsdoc/check-values": 1, // Recommended
         "jsdoc/empty-tags": 1, // Recommended
         "jsdoc/implements-on-classes": 1, // Recommended
-        "jsdoc/match-description": 1,
+        "jsdoc/match-description": 0,
         "jsdoc/newline-after-description": 1, // Recommended
         "jsdoc/no-bad-blocks": 1,
         "jsdoc/no-defaults": 1,

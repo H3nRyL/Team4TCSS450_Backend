@@ -1,8 +1,10 @@
 // Obtain a Pool of DB connections.
 const {Pool} = require('pg')
 
+const DB_URL = process.env.DEV_DATABASE_URL || process.env.DATABASE_URL
+
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: DB_URL,
     ssl: {
         rejectUnauthorized: false,
     },

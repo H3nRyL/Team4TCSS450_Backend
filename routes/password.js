@@ -12,7 +12,7 @@ const {generateSalt, generateHash} = require('../utilities')
 const pool = require('../utilities').pool
 
 /**
- * @api {get} /auth/changePassword Request to change password
+ * @api {put} /auth/changePassword Request to change password
  *
  * @apiName resetPass
  * @apiGroup Auth
@@ -25,7 +25,7 @@ const pool = require('../utilities').pool
  * @apiError (401: Invalid Password) {string} message "oldpassword is invalid"
  * @apiError (400: SQL Error) {string} message "SQL error when attempting to update"
  */
-router.get('/changePassword', checkToken,
+router.put('/changePassword', checkToken,
 // Checks if the body has the right fields and newpassword is valid
     (request, response, next) => {
         if (!request.body.oldpassword || !request.body.newpassword ||

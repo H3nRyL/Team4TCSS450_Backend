@@ -12,8 +12,9 @@ const router = express.Router()
 // Access the connection to Heroku Database
 const pool = require('../utilities').pool
 
-const {validation, generateHash, sendVerificationEmail} = require('../utilities')
+const {validation, sendVerificationEmail} = require('../utilities')
 const isStringProvided = validation.isStringProvided
+const checkPasswordSalt = validation.checkPasswordSalt
 
 const config = {
     secret: process.env.JSON_WEB_TOKEN,
@@ -106,11 +107,8 @@ router.get('/',
                         // Retrieve the salted-hash password provided from the DB
                         const storedSaltedHash = result.rows[0].password
 
-                        // Generate a hash based on the stored salt and the provided password
-                        const providedSaltedHash = generateHash(request.auth.password, salt)
-
                         // Did our salted hash match their salted hash?
-                        if (storedSaltedHash === providedSaltedHash ) {
+                        if (checkPasswordSalt(salt, storedSaltedHash, request.auth.password)) {
                             // credentials match. get a new JWT
                             const token = jwt.sign(
                                 {

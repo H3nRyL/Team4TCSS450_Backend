@@ -62,7 +62,6 @@ router.get('/', (request, response) => {
         pool.query(theQuery, values)
             .then((result) => {
                 if (!result.rowCount) {
-                    console.log(result.rowCount)
                     // Update failure html with reason
                     const html =
                         fs.readFileSync('./data/verification_failure.html', {encoding: 'utf-8'})

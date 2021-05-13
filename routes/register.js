@@ -12,11 +12,12 @@ const pool = require('../utilities').pool
 
 const validation = require('../utilities').validation
 const isStringProvided = validation.isStringProvided
+const validatePassword = validation.validatePassword
 
 const generateHash = require('../utilities').generateHash
 const generateSalt = require('../utilities').generateSalt
 
-const sendVerificationEmail = require('../utilities').sendVerificationEmail
+const {sendVerificationEmail} = require('../utilities').sendVerificationEmail
 
 const config = {
     secret: process.env.JSON_WEB_TOKEN,
@@ -56,6 +57,13 @@ router.post('/', (request, response) => {
         isStringProvided(username) &&
         isStringProvided(email) &&
         isStringProvided(password)) {
+        // Check if password is valid
+        if (!validatePassword(password)) {
+            response.status(400).send({
+                message: 'Invalid Password. Must be > 8 char, at least one special char,' +
+                'one number, one lower case letter, one uppercase letter'})
+            return
+        }
         const salt = generateSalt(32)
         const saltedHash = generateHash(password, salt)
 

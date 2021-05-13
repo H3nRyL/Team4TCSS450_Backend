@@ -9,6 +9,7 @@ const credUtils = require('./credentialingUtils')
 const generateHash = credUtils.generateHash
 const generateSalt = credUtils.generateSalt
 
+
 const validation = require('./validationUtils.js')
 
 const sendVerificationEmail = require('./email.js').sendVerificationEmail

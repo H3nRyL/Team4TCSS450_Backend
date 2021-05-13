@@ -224,6 +224,80 @@ define({ "api": [
     "groupTitle": "Auth"
   },
   {
+    "type": "get",
+    "url": "/auth/changePassword",
+    "title": "Request to change password",
+    "name": "resetPass",
+    "group": "Auth",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "oldpassword",
+            "description": "<p>previous password in body</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "newpassword",
+            "description": "<p>new password in body</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 201": [
+          {
+            "group": "Success 201",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>success message when password has been changed</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "404: User not found": [
+          {
+            "group": "404: User not found",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;User does not exist&quot;</p>"
+          }
+        ],
+        "401: Invalid Password": [
+          {
+            "group": "401: Invalid Password",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;oldpassword is invalid&quot;</p>"
+          }
+        ],
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;SQL error when attempting to update&quot;</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/password.js",
+    "groupTitle": "Auth"
+  },
+  {
     "type": "post",
     "url": "/chats/",
     "title": "Creates a chat with the given list of users, group name, and owner",

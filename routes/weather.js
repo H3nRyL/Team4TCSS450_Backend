@@ -24,36 +24,38 @@ const router = express.Router()
  *
  * @apiDescription This end point is a pass through to the Phish.net API.
  * All parameters will pass on to https://api.openweathermap.org/data/2.5/onecall.
- * See the <a href="https://openweathermap.org/api/one-call-api">openweathermap.org documentation</a>
+ * See the <a href="https://openweathermap.org/api/one-call-api">
+ * openweathermap.org documentation</a>
  * for a list of optional paramerters and expected results. You do not need a
  * openweathermap.org api key with this endpoint. Enjoy!
  */
 router.get('/', (req, res) => {
-    // for info on use of tilde (`) making a String literal, see below.
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
-    let url = 'https://api.openweathermap.org/data/2.5/onecall?'
+    if (isStringProvided(req.query.lat) && isStringProvided(req.query.lon)) {
+        // for info on use of tilde (`) making a String literal, see below.
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
+        const url = 'https://api.openweathermap.org/data/2.5/onecall?' +
+            `lat=${req.query.lat}&lon=${req.query.lon}`+
+            `&exclude=minutely&units=imperial&appid=${API_KEY}`
 
-    // find the query string (parameters) sent to this end point and pass them on to
-    // phish.net api call
+        // When this web service gets a request, make a request to the Phish Web service
+        request(url, function(error, response, body) {
+            if (error) {
+                res.send(error)
+            } else {
+                // pass on everything (try out each of these in Postman to see the difference)
+                // res.send(response);
 
-    url += 'lat='+ req.query.lat + '&'+ 'lon=' + req.query.lon +
-        '&exclude=minutely' + '&units=imperial' + '&appid=' + API_KEY
-    // When this web service gets a request, make a request to the Phish Web service
-    request(url, function(error, response, body) {
-        if (error) {
-            res.send(error)
-        } else {
-            // pass on everything (try out each of these in Postman to see the difference)
-            // res.send(response);
+                // or just pass on the body
 
-            // or just pass on the body
+                const n = body.indexOf('{')
+                const nakidBody = body.substring(n - 1)
 
-            const n = body.indexOf('{')
-            const nakidBody = body.substring(n - 1)
-
-            res.send(JSON.parse(nakidBody))
-        }
-    })
+                res.send(JSON.parse(nakidBody)).status(200)
+            }
+        })
+    } else {
+        res.send({message: 'Missing required information'}).status(400)
+    }
 })
 
 module.exports = router

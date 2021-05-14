@@ -4,7 +4,7 @@ const {checkToken} = require('../middleware')
 
 const router = express.Router()
 
-const {validatePassword, checkPasswordSalt} = require('../utilities/').validation
+const {validatePassword, checkPasswordSalt, isStringProvided} = require('../utilities/').validation
 
 const {generateSalt, generateHash} = require('../utilities')
 
@@ -72,8 +72,57 @@ router.put('/changePassword', checkToken,
                 }
             })
             .catch((error) => {
-                response.status(400).send({messagine: 'Failed to Change Password'})
+                response.status(400).send({messaging: 'Failed to Change Password', error: error})
             })
     })
+
+/**
+ * @api {}
+ * 
+ */
+router.get('/resetPassword', (request, response, next) => {
+    if (!isStringProvided(request.body.email)) {
+        response.status(400).send({message: 'Missing body parameter'})
+    } else {
+        next()
+    }
+},
+// Check if user has already been verified
+(request, response, next) => {
+    const theQuery = 'SELECT COUNT(*) FROM MEMBERS WHERE email=$1 AND verification = 1'
+
+    pool.query(theQuery, [request.body.email])
+        .then((result) => {
+            if (result.rowCount) {
+                next()
+            } else {
+                response.status(404).send({message: 'User not found. Maybe they\'t not verified yet.'})
+            }
+        })
+        .catch((error) => {
+            response.status(400).send({message: 'SQL Error', error: error})
+        })
+},
+//  TODO does not check if a code already exists
+(request, response) => {
+    // Generate random int
+    const randomInt = Math.floor(Math.random()*90000) + 10000
+    // const theQuery = 'INSERT INTO '
+})
+
+/**
+ * @api {}
+ * 
+ */
+ router.put('/resetPassword', checkToken, (request, response, next) => {
+    if (!isStringProvided(request.body.email) && !isNaN(request.body.code)) {
+        response.status(400).send({message: 'Missing body parameter'})
+    } else {
+        next()
+    }
+},
+(request, response, next) => {
+    const theQuery = 'SELECT COUNT(*) FROM MEMBERS WHERE email=$1 AND verification = 1'
+})
 
 module.exports = router

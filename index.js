@@ -25,6 +25,7 @@ app.use('/verification', require('./routes/verify'))
 app.use('/chats', middleware.checkToken, require('./routes/chats'))
 
 app.use('/messages', middleware.checkToken, require('./routes/messages'))
+app.use('/weather', middleware.checkToken, require('./routes/weather'))
 
 app.use('/doc', express.static('apidoc'))
 

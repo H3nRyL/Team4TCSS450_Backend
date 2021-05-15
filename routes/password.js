@@ -8,13 +8,15 @@ const {validatePassword, checkPasswordSalt, isStringProvided} = require('../util
 
 const {generateSalt, generateHash} = require('../utilities')
 
+const sendResetEmail = require('../utilities').sendResetEmail
+
 // Access the connection to Heroku Database
 const pool = require('../utilities').pool
 
 /**
  * @api {put} /auth/changePassword Request to change password
  *
- * @apiName resetPass
+ * @apiName changePass
  * @apiGroup Auth
  *
  * @apiParam {string} oldpassword previous password in body
@@ -77,52 +79,146 @@ router.put('/changePassword', checkToken,
     })
 
 /**
- * @api {}
- * 
+ * @api {get} /auth/resetPassword Change the password if forgotten, sends email with code
+ *
+ * @apiName resetPass
+ * @apiGroup Auth
+ *
+ * @apiParam {string} email email of the user to reset
+ *
+ * @apiSuccess (Success 201) {string} message success message that email was sent
+ *
  */
-router.get('/resetPassword', (request, response, next) => {
-    if (!isStringProvided(request.body.email)) {
-        response.status(400).send({message: 'Missing body parameter'})
-    } else {
+router.get('/resetPassword',
+    // Checks if email is passed to reference
+    (request, response, next) => {
+        if (!isStringProvided(request.body.email)) {
+            response.status(400).send({message: 'Missing body parameter'})
+        } else {
+            next()
+        }
+    },
+    // Check if user has already been verified
+    (request, response, next) => {
+        const theQuery = 'SELECT memberid FROM MEMBERS WHERE email=$1 AND verification = 1'
+
+        pool.query(theQuery, [request.body.email])
+            .then((result) => {
+                if (result.rowCount) {
+                    // Removes any existing with the corresponding memberid
+                    deleteCode(result.rows[0].memberid)
+                    next()
+                } else {
+                    response.status(404).send({message: 'User not found. Maybe they\'' +
+                        't not verified yet.'})
+                }
+            })
+            .catch((error) => {
+                response.status(400).send({message: 'SQL Error', error: error})
+            })
+    },
+    // Generate random 5 digits and inserts into temporary codes
+    (request, response) => {
+        // Generate random int
+        const randomInt = Math.floor(Math.random() * 90000) + 10000
+        const theQuery = 'INSERT INTO temporarycodes(memberid, code) SELECT ' +
+                         'memberid, $1 FROM Members WHERE email=$2 RETURNING code'
+        pool.query(theQuery, [randomInt, request.body.email])
+            .then((result) => {
+                sendResetEmail(request.body.email, result.rows[0].code)
+                response.status(200).send('Code has been sent to the specified email.')
+            })
+            .catch((error) => {
+                console.log(error)
+                response.status(400).send({message: 'Error creating code', error})
+            })
+    })
+
+/**
+ * @api {put}
+ * @apiGroup Auth
+ */
+router.put('/resetPassword', (request, response, next) => {
+    if (isStringProvided(request.body.email) && !isNaN(request.body.code) &&
+        isStringProvided(request.body.password)) {
         next()
+    } else {
+        response.status(400).send({message: 'Missing body parameter'})
     }
 },
-// Check if user has already been verified
+// Check if user is verified
 (request, response, next) => {
-    const theQuery = 'SELECT COUNT(*) FROM MEMBERS WHERE email=$1 AND verification = 1'
+    const theQuery = 'SELECT email FROM MEMBERS WHERE email=$1 AND verification=1'
 
     pool.query(theQuery, [request.body.email])
         .then((result) => {
             if (result.rowCount) {
                 next()
             } else {
-                response.status(404).send({message: 'User not found. Maybe they\'t not verified yet.'})
+                response.status(404).send({message: 'User not found. Maybe they\'' +
+                    't not verified yet.'})
             }
         })
         .catch((error) => {
             response.status(400).send({message: 'SQL Error', error: error})
         })
 },
-//  TODO does not check if a code already exists
+(request, response, next) => {
+    const theQuery = 'SELECT members.memberid, timestamp, code FROM temporarycodes INNER JOIN Members ON ' +
+    'Members.memberid = temporarycodes.memberid AND Members.email=$1'
+    pool.query(theQuery, [request.body.email])
+        .then((result) => {
+            // Nothing was found with the requested email
+            if (!result.rowCount) {
+                response.status(400).send({message: 'Code does not exist'})
+                return
+            }
+
+            // Check if 20 minutes have already passed
+            if (new Date(Date.now() -
+                Date.parse(String(result.rows[0].timestamp))).getMinutes() < 20) {
+                if (result.rows[0].code === request.body.code) {
+                    request.memberid = result.rows[0].memberid
+                    next()
+                } else {
+                    response.status(400).send({message: 'Code is not valid'})
+                }
+            } else {
+                response.status(400).send({message: 'Code has expired'})
+            }
+        })
+        .catch((error) => {
+            response.status(400).send({message: 'SQL Error', error})
+        })
+},
+// Tries to delete the temporary code and update password
 (request, response) => {
-    // Generate random int
-    const randomInt = Math.floor(Math.random()*90000) + 10000
-    // const theQuery = 'INSERT INTO '
+    if (validatePassword(request.body.password)) {
+        deleteCode(request.memberid)
+        const salt = generateSalt(32)
+        const saltedHash = generateHash(request.body.password, salt)
+        const theQuery = 'UPDATE Members SET Salt = $1, Password = $2 WHERE email=$3'
+        pool.query(theQuery, [salt, saltedHash, request.body.email])
+            .then((result) => {
+                response.status(200).send({message: 'Password has been updated.'})
+                deleteCode(request.memberid)
+            })
+            .catch((error) => response.status(400).send({message: 'SQL Error', error}))
+    } else {
+        response.status(400).send({message: 'Invalid Password'})
+    }
 })
 
 /**
- * @api {}
- * 
+ * Deletes code(s) in the temporary codes table that match the member id
+ *
+ * @param {number} memberid a member id in the table
  */
- router.put('/resetPassword', checkToken, (request, response, next) => {
-    if (!isStringProvided(request.body.email) && !isNaN(request.body.code)) {
-        response.status(400).send({message: 'Missing body parameter'})
-    } else {
-        next()
-    }
-},
-(request, response, next) => {
-    const theQuery = 'SELECT COUNT(*) FROM MEMBERS WHERE email=$1 AND verification = 1'
-})
+function deleteCode(memberid) {
+    const removeQuery = 'DELETE FROM temporarycodes WHERE memberid=$1'
+    pool.query(removeQuery, [memberid])
+        .then(console.log)
+        .catch(console.log)
+}
 
 module.exports = router

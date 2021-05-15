@@ -12,8 +12,8 @@ const generateSalt = credUtils.generateSalt
 
 const validation = require('./validationUtils.js')
 
-const sendVerificationEmail = require('./email.js').sendVerificationEmail
+const {sendVerificationEmail, sendResetEmail} = require('./email.js')
 
 module.exports = {
-    pool, generateHash, generateSalt, validation, sendVerificationEmail,
+    pool, generateHash, generateSalt, validation, sendVerificationEmail, sendResetEmail,
 }

@@ -69,7 +69,7 @@ CREATE TABLE Push_Token (KeyID SERIAL PRIMARY KEY,
 
 DROP TABLE IF EXISTS TemporaryCodes;
 CREATE TABLE TemporaryCodes (Code INT,
-                            MemberID INT,
+                            MemberID INT NOT NULL UNIQUE,
                             FOREIGN KEY(MemberID) REFERENCES Members(MemberID), 
                             TimeStamp TIMESTAMP WITH TIME ZONE DEFAULT current_timestamp
 );

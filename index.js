@@ -24,6 +24,7 @@ app.use('/auth', require('./routes/signin'))
 app.use('/verification', require('./routes/verify'))
 app.use('/chats', middleware.checkToken, require('./routes/chats'))
 
+app.use('/contacts', middleware.checkToken, require('./routes/contacts'))
 app.use('/messages', middleware.checkToken, require('./routes/messages'))
 app.use('/weather', middleware.checkToken, require('./routes/weather'))
 

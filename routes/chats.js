@@ -33,9 +33,8 @@ router.get('/', (request, response) => {
     const query = `SELECT DISTINCT ON (m.chatid) m.chatid as chatid, c.groupname as groupname, 
                                                  m.message AS message, m.timestamp AS timestamp
                     FROM ChatMembers AS cm INNER JOIN Messages AS m 
-                        ON m.memberid = cm.memberid
-                        AND m.memberid = $1
-                        AND m.chatid = cm.chatid
+                        ON m.chatid = cm.chatid
+                        AND cm.memberid = $1
                     INNER JOIN Chats as c
                         ON m.chatid = c.chatid
                     ORDER BY m.chatid, m.timestamp DESC`

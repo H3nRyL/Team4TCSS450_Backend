@@ -52,8 +52,8 @@ router.post('/', (request, response) => {
  * @apiError (400: Missing Parameters) {String} message "Missing required information"
  * @apiError (404: No contacts found) {String} message "You have no contacts"
  **/
-router.post('/', (request, response) => {
-    const id = request.body.memberid
+router.get('/', (request, response) => {
+    const id = request.query.memberid
     if(isStringProvided(id)) {
         const values = [id]
         const theQuery = "SELECT FirstName, LastName FROM Members WHERE Members.MemberID IN"

@@ -224,10 +224,10 @@ define({ "api": [
     "groupTitle": "Auth"
   },
   {
-    "type": "get",
+    "type": "put",
     "url": "/auth/changePassword",
     "title": "Request to change password",
-    "name": "resetPass",
+    "name": "changePass",
     "group": "Auth",
     "parameter": {
       "fields": {
@@ -289,6 +289,132 @@ define({ "api": [
             "optional": false,
             "field": "message",
             "description": "<p>&quot;SQL error when attempting to update&quot;</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/password.js",
+    "groupTitle": "Auth"
+  },
+  {
+    "type": "get",
+    "url": "/auth/resetPassword",
+    "title": "Change the password if forgotten, sends email with code",
+    "name": "resetPass_Pt._1",
+    "group": "Auth",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "email",
+            "description": "<p>email of the user to reset</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 201": [
+          {
+            "group": "Success 201",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>success message that email was sent</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/password.js",
+    "groupTitle": "Auth"
+  },
+  {
+    "type": "put",
+    "url": "/auth/resetPassword",
+    "title": "Checks the code and password to update if valid code and password",
+    "name": "resetPass_Pt._2",
+    "group": "Auth",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "email",
+            "description": "<p>email associated with account to reset</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "password",
+            "description": "<p>new password to reset</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "code",
+            "description": "<p>to validate the correct user</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 201": [
+          {
+            "group": "Success 201",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>success message when password has been updated</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;SQL error when attempting to update&quot;</p>"
+          }
+        ],
+        "400: Body Parameter": [
+          {
+            "group": "400: Body Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Missing body parameter&quot;</p>"
+          }
+        ],
+        "404: User not found": [
+          {
+            "group": "404: User not found",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;User has not been found&quot;</p>"
+          }
+        ],
+        "400: Code Errors": [
+          {
+            "group": "400: Code Errors",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Multiple errors regarding code (e.g. invalid)</p>"
           }
         ]
       }
@@ -460,6 +586,71 @@ define({ "api": [
     "version": "0.0.0",
     "filename": "routes/chats.js",
     "groupTitle": "Chats"
+  },
+  {
+    "type": "get",
+    "url": "/contacts",
+    "title": "",
+    "name": "GetContacts",
+    "group": "Contacts",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "the",
+            "description": "<p>user's memberID</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 201": [
+          {
+            "group": "Success 201",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when the name is inserted</p>"
+          },
+          {
+            "group": "Success 201",
+            "type": "String",
+            "optional": false,
+            "field": "email",
+            "description": "<p>the email of the user inserted</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: Missing Parameters": [
+          {
+            "group": "400: Missing Parameters",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Missing required information&quot;</p>"
+          }
+        ],
+        "404: No contacts found": [
+          {
+            "group": "404: No contacts found",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;You have no contacts&quot;</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/contacts.js",
+    "groupTitle": "Contacts"
   },
   {
     "type": "get",
@@ -752,6 +943,50 @@ define({ "api": [
     "version": "0.0.0",
     "filename": "routes/messages.js",
     "groupTitle": "Messages"
+  },
+  {
+    "type": "get",
+    "url": "/weather",
+    "title": "Request a list of Phish.net Blogs",
+    "name": "GetOpenWeatherMapGet",
+    "group": "OpenWeatherMap",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "string",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>JWT provided from Auth get</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "lat",
+            "description": "<p>location's latitude</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "lon",
+            "description": "<p>location's longitude</p>"
+          }
+        ]
+      }
+    },
+    "description": "<p>This end point is a pass through to the Phish.net API. All parameters will pass on to https://api.openweathermap.org/data/2.5/onecall. See the <a href=\"https://openweathermap.org/api/one-call-api\"> openweathermap.org documentation</a> for a list of optional paramerters and expected results. You do not need a openweathermap.org api key with this endpoint. Enjoy!</p>",
+    "version": "0.0.0",
+    "filename": "routes/weather.js",
+    "groupTitle": "OpenWeatherMap"
   },
   {
     "type": "get",

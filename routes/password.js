@@ -81,7 +81,7 @@ router.put('/changePassword', checkToken,
 /**
  * @api {get} /auth/resetPassword Change the password if forgotten, sends email with code
  *
- * @apiName resetPass
+ * @apiName resetPass Pt. 1
  * @apiGroup Auth
  *
  * @apiParam {string} email email of the user to reset
@@ -135,8 +135,20 @@ router.get('/resetPassword',
     })
 
 /**
- * @api {put}
+ * @api {put} /auth/resetPassword Checks the code and password to update if valid code and password
+ *
+ * @apiName resetPass Pt. 2
  * @apiGroup Auth
+ *
+ * @apiParam {string} email email associated with account to reset
+ * @apiParam {string} password new password to reset
+ * @apiParam {number} code to validate the correct user
+ *
+ * @apiSuccess (Success 201) {string} message success message when password has been updated
+ * @apiError (400: SQL Error) {string} message "SQL error when attempting to update"
+ * @apiError (400: Body Parameter) {string} message "Missing body parameter"
+ * @apiError (404: User not found) {string} message "User has not been found"
+ * @apiError (400: Code Errors) {string} message Multiple errors regarding code (e.g. invalid)
  */
 router.put('/resetPassword', (request, response, next) => {
     if (isStringProvided(request.body.email) && !isNaN(request.body.code) &&

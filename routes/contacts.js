@@ -56,7 +56,7 @@ router.get('/', (request, response) => {
     const id = request.query.memberid
     if(isStringProvided(id)) {
         const values = [id]
-        const theQuery = "SELECT FirstName, LastName FROM Members WHERE Members.MemberID IN"
+        const theQuery = "SELECT MemberID, FirstName, LastName, UserName, Email FROM Members WHERE Members.MemberID IN"
             + " (SELECT MemberID_B FROM Contacts WHERE $1 = Contacts.MemberID_A AND Verified = 1)"
         pool.query(theQuery, values)
             .then((result) => {

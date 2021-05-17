@@ -39,6 +39,17 @@ function sendVerificationEmail(receiver, jwt) {
 }
 
 /**
+ * Sends a reset email where a user can get a code to reset their password
+ *
+ * @param {string} receiver the email to send to
+ * @param {number} code the code to use to reset
+ *
+ */
+function sendResetEmail(receiver, code) {
+    sendEmail(process.env.SENDER_EMAIL, process.env.SENDER_PW, receiver, 'Reset Code', code + '', code + '')
+}
+
+/**
  * Sends an email to the receiver
  *
  * @param {string} sender email of sender
@@ -84,5 +95,5 @@ function sendEmail(sender, pw, receiver, subject, message, html) {
 }
 
 module.exports = {
-    sendVerificationEmail,
+    sendVerificationEmail, sendResetEmail,
 }

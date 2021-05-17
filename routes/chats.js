@@ -41,13 +41,16 @@ router.get('/', (request, response) => {
 
     pool.query(query, [request.decoded.memberid])
         .then((result) => {
-            const chats = []
-            result.rows.forEach((row) => {
-                // Get the group name, timestamp of last message, and last message of the chats
-                chats.push({chatId: row.chatid, groupname: row.groupname,
-                    lastmessage: row.message, lasttimestamp: row.timestamp})
+            response.status(200).send({
+                chats: result.rows
             })
-            response.status(200).send(chats)
+            // const chats = []
+            // result.rows.forEach((row) => {
+            //     // Get the group name, timestamp of last message, and last message of the chats
+            //     chats.push({chatId: row.chatid, groupname: row.groupname,
+            //         lastmessage: row.message, lasttimestamp: row.timestamp})
+            // })
+            // response.status(200).send(chats)
         })
         .catch((error) => {
             response.status(400).send({message: 'SQL Error', error: error})

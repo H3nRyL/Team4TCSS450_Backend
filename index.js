@@ -21,6 +21,7 @@ app.use(middleware.jsonErrorInBody)
 
 app.use('/auth', require('./routes/register'))
 app.use('/auth', require('./routes/signin'))
+app.use('/auth', require('./routes/password'))
 app.use('/verification', require('./routes/verify'))
 app.use('/chats', middleware.checkToken, require('./routes/chats'))
 

@@ -89,7 +89,7 @@ router.put('/changePassword', checkToken,
  * @apiSuccess (Success 201) {string} message success message that email was sent
  *
  */
-router.get('/resetPassword',
+router.post('/resetPassword',
     // Checks if email is passed to reference
     (request, response, next) => {
         console.log(request.body)

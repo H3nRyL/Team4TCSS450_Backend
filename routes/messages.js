@@ -100,7 +100,7 @@ router.post('/', (request, response, next) => {
             if (result.rowCount == 1) {
                 // insertion success. Attach the message to the Response obj
                 response.message = result.rows[0]
-                response.status(200).send(result.rows)
+                response.message.email = request.decoded.email
                 // Pass on to next to push
                 next()
             } else {
@@ -116,28 +116,28 @@ router.post('/', (request, response, next) => {
         })
 }, (request, response) => {
     // send a notification of this message to ALL members with registered tokens
-    // const query = `SELECT token FROM Push_Token
-    //                     INNER JOIN ChatMembers ON
-    //                     Push_Token.memberid=ChatMembers.memberid
-    //                     WHERE ChatMembers.chatid=$1`
-    // const values = [request.body.chatid]
-    // pool.query(query, values)
-    //     .then((result) => {
-    //         console.log(request.decoded.email)
-    //         console.log(request.body.message)
-    //         result.rows.forEach((entry) =>
-    //             msg_functions.sendMessageToIndividual(
-    //                 entry.token,
-    //                 response.message))
-    //         response.send({
-    //             success: true,
-    //         })
-    //     }).catch((err) => {
-    //         response.status(400).send({
-    //             message: 'SQL Error on select from push token',
-    //             error: err,
-    //         })
-    //     })
+    const query = `SELECT token FROM Push_Token
+                        INNER JOIN ChatMembers ON
+                        Push_Token.memberid=ChatMembers.memberid
+                        WHERE ChatMembers.chatid=$1`
+    const values = [request.body.chatid]
+    pool.query(query, values)
+        .then((result) => {
+            console.log(request.decoded.email)
+            console.log(request.body.message)
+            result.rows.forEach((entry) =>
+                msg_functions.sendMessageToIndividual(
+                    entry.token,
+                    response.message))
+            response.send({
+                success: true,
+            })
+        }).catch((err) => {
+            response.status(400).send({
+                message: 'SQL Error on select from push token',
+                error: err,
+            })
+        })
 })
 
 /**

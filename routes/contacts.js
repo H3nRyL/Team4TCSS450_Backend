@@ -4,14 +4,13 @@
 // express is the framework we're going to use to handle requests
 const express = require('express')
 
-
 // Access the connection to Heroku Database
 const pool = require('../utilities').pool
 const {validation} = require('../utilities')
-
 const isStringProvided = validation.isStringProvided
 
 const router = express.Router();
+
 /*
 router.post('/', (request, response) => {
         const first = request.body.first
@@ -47,14 +46,15 @@ router.post('/', (request, response) => {
  * @apiName GetContacts
  * @apiGroup Contacts
  * @apiParam {String} the user's memberID
- * @apiSuccess (Success 201) {boolean} success true when the name is inserted
- * @apiSuccess (Success 201) {String} email the email of the user inserted
+ * @apiSuccess (Success 201) {boolean} success true when contacts are returned
+ * @apiSuccess (Success 201) {JSONArray} JSON object with all of the contact information
  * @apiError (400: Missing Parameters) {String} message "Missing required information"
  * @apiError (404: No contacts found) {String} message "You have no contacts"
  **/
 router.get('/', (request, response) => {
     
-    const id = checkToken.decoded.memberid
+    var id = request.decoded.memberid.toString()
+    
     if(isStringProvided(id)) {
         const values = [id]
         const theQuery = "SELECT MemberID, FirstName, LastName, UserName, Email FROM Members WHERE Members.MemberID IN"

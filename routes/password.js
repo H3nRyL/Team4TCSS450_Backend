@@ -92,6 +92,7 @@ router.put('/changePassword', checkToken,
 router.get('/resetPassword',
     // Checks if email is passed to reference
     (request, response, next) => {
+        console.log(request.body)
         if (!isStringProvided(request.body.email)) {
             response.status(400).send({message: 'Missing body parameter'})
         } else {

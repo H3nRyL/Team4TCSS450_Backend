@@ -53,7 +53,8 @@ router.post('/', (request, response) => {
  * @apiError (404: No contacts found) {String} message "You have no contacts"
  **/
 router.get('/', (request, response) => {
-    const id = request.query.memberid
+    
+    const id = checkToken.decoded.memberid
     if(isStringProvided(id)) {
         const values = [id]
         const theQuery = "SELECT MemberID, FirstName, LastName, UserName, Email FROM Members WHERE Members.MemberID IN"

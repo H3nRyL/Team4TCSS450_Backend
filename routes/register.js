@@ -17,7 +17,7 @@ const validatePassword = validation.validatePassword
 const generateHash = require('../utilities').generateHash
 const generateSalt = require('../utilities').generateSalt
 
-const {sendVerificationEmail} = require('../utilities').sendVerificationEmail
+const {sendVerificationEmail} = require('../utilities')
 
 const config = {
     secret: process.env.JSON_WEB_TOKEN,

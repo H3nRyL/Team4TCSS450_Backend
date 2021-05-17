@@ -127,7 +127,7 @@ router.get('/resetPassword',
         pool.query(theQuery, [randomInt, request.body.email])
             .then((result) => {
                 sendResetEmail(request.body.email, result.rows[0].code)
-                response.status(200).send('Code has been sent to the specified email.')
+                response.status(200).send({message: 'Code has been sent to the specified email.'})
             })
             .catch((error) => {
                 console.log(error)

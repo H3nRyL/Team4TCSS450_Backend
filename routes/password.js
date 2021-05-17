@@ -79,7 +79,7 @@ router.put('/changePassword', checkToken,
     })
 
 /**
- * @api {get} /auth/resetPassword Change the password if forgotten, sends email with code
+ * @api {post} /auth/resetPassword Change the password if forgotten, sends email with code
  *
  * @apiName resetPass Pt. 1
  * @apiGroup Auth

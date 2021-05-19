@@ -30,27 +30,32 @@ const router = express.Router()
  */
 router.get('/', (request, response) => {
     // Get a list of chats with chatid, timestamp, and last message
-    const query = `SELECT DISTINCT ON (m.chatid) m.chatid as chatid, c.groupname as groupname, 
-                                                 m.message AS message, m.timestamp AS timestamp
-                    FROM ChatMembers AS cm INNER JOIN Messages AS m 
-                        ON m.chatid = cm.chatid
-                        AND cm.memberid = $1
-                    INNER JOIN Chats as c
-                        ON m.chatid = c.chatid
-                    ORDER BY m.chatid, m.timestamp DESC`
+    const query = `SELECT DISTINCT ON (c.chatid) c.chatid AS chatid, c.groupname AS groupname,
+                    COALESCE(
+                        (SELECT message 
+                        FROM Messages 
+                        WHERE chatid = c.chatid 
+                        ORDER BY timestamp DESC 
+                        LIMIT 1), 
+                        '') 
+                        AS message, 
+                    COALESCE(
+                        (SELECT timestamp 
+                        FROM Messages 
+                        WHERE chatid = c.chatid 
+                        ORDER BY timestamp DESC 
+                        LIMIT 1), 
+                        null) 
+                        AS timestamp
+                    FROM ChatMembers AS cm INNER JOIN Chats AS c
+                    ON cm.chatid = c.chatid
+                    AND cm.memberid = $1`
 
     pool.query(query, [request.decoded.memberid])
         .then((result) => {
             response.status(200).send({
-                chats: result.rows
+                chats: result.rows,
             })
-            // const chats = []
-            // result.rows.forEach((row) => {
-            //     // Get the group name, timestamp of last message, and last message of the chats
-            //     chats.push({chatId: row.chatid, groupname: row.groupname,
-            //         lastmessage: row.message, lasttimestamp: row.timestamp})
-            // })
-            // response.status(200).send(chats)
         })
         .catch((error) => {
             response.status(400).send({message: 'SQL Error', error: error})

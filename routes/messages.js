@@ -3,6 +3,8 @@ const express = require('express')
 // Access the connection to Heroku Database
 const pool = require('../utilities').pool
 
+const notifyOthers = require('../utilities/exports').messaging
+
 const {validation} = require('../utilities')
 const isStringProvided = validation.isStringProvided
 
@@ -53,11 +55,11 @@ router.post('/', (request, response, next) => {
 }, (request, response, next) => {
     // validate chat id exists
     const query = 'SELECT * FROM CHATS WHERE ChatId=$1'
-    const values = [request.body.chatid]
-
-    pool.query(query, values)
+    console.log(request.body.chatid)
+    pool.query(query, [request.body.chatid])
         .then((result) => {
-            if (result.rowCount == 0) {
+            console.log(result)
+            if (result.rowCount === 0) {
                 response.status(404).send({
                     message: 'Chat ID not found',
                 })
@@ -126,7 +128,7 @@ router.post('/', (request, response, next) => {
             console.log(request.decoded.email)
             console.log(request.body.message)
             result.rows.forEach((entry) =>
-                msg_functions.sendMessageToIndividual(
+                notifyOthers.sendMessageToIndividual(
                     entry.token,
                     response.message))
             response.send({
@@ -182,6 +184,7 @@ router.get('/:chatid?/:messageId?', (request, response, next) => {
         next()
     }
 }, (request, response, next) => {
+    console.log(request.params.chatid)
     // validate that the ChatId exists
     const query = 'SELECT * FROM CHATS WHERE ChatId=$1'
     const values = [request.params.chatid]

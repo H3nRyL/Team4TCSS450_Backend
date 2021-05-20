@@ -59,7 +59,7 @@ router.get('/', (request, response) => {
     if(isStringProvided(id)) {
         const values = [id]
         const theQuery = "SELECT MemberID, FirstName, LastName, UserName, Email FROM Members WHERE Members.MemberID IN"
-            + " (SELECT MemberID_B FROM Contacts WHERE $1 = Contacts.MemberID_A AND Verified = 1)"
+        + " (SELECT MemberID_B FROM Contacts WHERE $1 = Contacts.MemberID_A AND Verified = 1)"
         pool.query(theQuery, values)
             .then((result) => {
                     if(result.rowCount > 0) {
@@ -68,7 +68,7 @@ router.get('/', (request, response) => {
                             'data':result.rows,
                         })
                     } else {
-                        response.status(404).send({message: 'There are no contacts'})
+                        response.status(201).send({message: 'There are no contacts'})
                     }
             })
             .catch((error) => {

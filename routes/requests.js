@@ -31,7 +31,7 @@ router.post('/',
         const values = [id, requesterid]
         //TODO This assumes that the request is already in contacts and does not contain a check. It updates the
         //invitees contacts, but not the users
-        const theQuery = "UPDATE Contacts SET Verified = $1 WHERE MemberID_A = $2 AND MemberID_B = $2 RETURNING Verified AS Entered"
+        const theQuery = "UPDATE Contacts SET Verified = $1 WHERE MemberID_A = $1 AND MemberID_B = $2 RETURNING Verified AS Entered"
         pool.query(theQuery, values)
             .then((result) => {
                     if(result.rows[0].entered) {

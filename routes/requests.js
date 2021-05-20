@@ -74,4 +74,34 @@ router.post('/',
             })
     }
 )
-module.export.router
+/**
+ * @api {get} /requuests Gets all pending friend requests
+ * @apiName GetRequests
+ * @apiGroup Requests
+ *
+ * @apiSuccess (Success 200) {boolean} success true when the invite was sent
+ * @apiSuccess (Success 200) {JSONArray} success when the list of potential requests is returned
+ * 
+ */
+ router.get('/',
+ // Checks if invite exists from the other member so we update it.
+ (request, response) => {
+     const userid = request.decoded.memberid
+     const values = [userid]
+     const theQuery = "SELECT FirstName, LastName, MemberID FROM Members INNER JOIN Contacts ON Members.MemberID = Contacts.MemberID_A WHERE Contacts.MemberID_B = $1"
+     pool.query(theQuery, values)
+     .then((result) => {
+         if (result.rowCount > 0) {
+             response.status(200).send({
+                 success:true,
+                 'data': result.rows,
+                 message: `Members have been returned`,
+             })
+         }
+     })
+     .catch((error) => {
+         response.status(402).send({message:
+             'You are already friends with all possible contacts! Congratulations!', error})
+     })
+ })
+module.exports = router

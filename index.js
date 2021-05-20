@@ -27,6 +27,7 @@ app.use('/chats', middleware.checkToken, require('./routes/chats'))
 
 app.use('/contacts', middleware.checkToken, require('./routes/contacts'))
 app.use('/invites', middleware.checkToken, require('./routes/invites'))
+app.use('/requests', middleware.checkToken, require('./routes/requests'))
 
 app.use('/messages', middleware.checkToken, require('./routes/messages'))
 app.use('/weather', middleware.checkToken, require('./routes/weather'))

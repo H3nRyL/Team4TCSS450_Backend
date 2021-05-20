@@ -11,7 +11,8 @@ const isStringProvided = validation.isStringProvided
 
 const router = express.Router();
 
-/*
+
+/* Preliminary search for 
 router.post('/', (request, response) => {
         const first = request.body.first
         const last = request.body.last
@@ -61,7 +62,7 @@ router.get('/', (request, response) => {
             + " (SELECT MemberID_B FROM Contacts WHERE $1 = Contacts.MemberID_A AND Verified = 1)"
         pool.query(theQuery, values)
             .then((result) => {
-                    if(result.rowCount > 0){
+                    if(result.rowCount > 0) {
                         response.status(201).json({
                             success : true,
                             'data':result.rows,

@@ -6,15 +6,15 @@ const express = require('express')
 
 // Access the connection to Heroku Database
 const pool = require('../utilities').pool
-const router = express.Router();
+const router = express.Router()
 
 /**
  * @api {post} /invites Request to send an invite to another user
  * @apiName PostInvite
  * @apiGroup Invites
  *
- * @apiParam {String} memberid_a the memberID of the requester
- * @apiParam {String} memberid_b the memberID of the user receiving the request
+ * @apiParam {string} memberid_a the memberID of the requester
+ * @apiParam {string} memberid_b the memberID of the user receiving the request
  *
  * @apiSuccess (Success 201) {boolean} success true when the invite was sent
  * @apiSuccess (Success 202) {boolean} success when the other users contact list is updated as well
@@ -70,32 +70,32 @@ router.post('/',
  * @apiName GetInvite
  * @apiGroup Invites
  *
- * @apiParam {String} memberid_a the memberID of the requester
- * @apiParam {String} memberid_b the memberID of the user receiving the request
+ * @apiParam {string} memberid_a the memberID of the requester
+ * @apiParam {string} memberid_b the memberID of the user receiving the request
  *
  * @apiSuccess (Success 200) {boolean} success true when the invite was sent
  * @apiSuccess (Success 200) {JSONArray} success when the list of potential invites is returned
- * 
+ *
  */
 router.get('/',
     // Checks if invite exists from the other member so we update it.
     (request, response, next) => {
         const userid = request.decoded.memberid
         const values = [userid]
-        const theQuery = "SELECT MemberID, FirstName, LastName, UserName, Email FROM Members WHERE Members.MemberID NOT IN (SELECT MemberID_B FROM Contacts WHERE MemberID_A = $1 OR MemberID_B = $1)"
+        const theQuery = 'SELECT MemberID, FirstName, LastName, UserName, Email FROM Members WHERE Members.MemberID NOT IN (SELECT MemberID_B FROM Contacts WHERE MemberID_A = $1 OR MemberID_B = $1)'
         pool.query(theQuery, values)
-        .then((result) => {
-            if (result.rowCount > 0) {
-                response.status(200).send({
-                    success:true,
-                    'data': result.rows,
-                    message: `Members have been returned`,
-                })
-            }
-        })
-        .catch((error) => {
-            response.status(402).send({message:
+            .then((result) => {
+                if (result.rowCount > 0) {
+                    response.status(200).send({
+                        'success': true,
+                        'data': result.rows,
+                        'message': 'Members have been returned',
+                    })
+                }
+            })
+            .catch((error) => {
+                response.status(402).send({message:
                 'You are already friends with all possible contacts! Congratulations!', error})
-        })
+            })
     })
 module.exports = router

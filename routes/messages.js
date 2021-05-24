@@ -58,7 +58,6 @@ router.post('/', (request, response, next) => {
     console.log(request.body.chatid)
     pool.query(query, [request.body.chatid])
         .then((result) => {
-            console.log(result)
             if (result.rowCount === 0) {
                 response.status(404).send({
                     message: 'Chat ID not found',
@@ -75,6 +74,8 @@ router.post('/', (request, response, next) => {
 }, (request, response, next) => {
     // validate memberid exists in the chat
     const query = 'SELECT * FROM ChatMembers WHERE ChatId=$1 AND MemberId=$2'
+    console.log(request.body.chatid)
+    console.log(request.decoded.memberid)
     const values = [request.body.chatid, request.decoded.memberid]
     pool.query(query, values)
         .then((result) => {

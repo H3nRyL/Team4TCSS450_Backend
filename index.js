@@ -32,6 +32,8 @@ app.use('/requests', middleware.checkToken, require('./routes/requests'))
 app.use('/messages', middleware.checkToken, require('./routes/messages'))
 app.use('/weather', middleware.checkToken, require('./routes/weather'))
 
+app.use('/auth', middleware.checkToken, require('./routes/pushyregister'))
+
 app.use('/doc', express.static('apidoc'))
 
 /*

@@ -139,4 +139,51 @@ router.post('/', (request, response, next) => {
     })
 })
 
+/**
+ * @api {delete} /chats/chatid/members Deletes a user belonging to chatid
+ */
+router.delete('/:chatid/members/', (request, response, next) => {
+    if (request.query.p && !isNaN(request.query.p)) {
+        next()
+    } else {
+        // Missing or invalid p
+        response.status(400).send({message: 'p query is invalid or missing'})
+    }
+},
+// Checks if user sending request and one to be deleted is part of chat
+(request, response, next) => {
+    const theQuery = 'SELECT * FROM ChatMembers WHERE chatid=$1 AND (memberid=$2 OR memberid=$3)'
+    pool.query(theQuery, [request.params.chatid, request.decoded.memberid, request.query.p])
+        .then((result) => {
+            if (result.rowCount) {
+                next()
+            } else {
+                response.status(400).send({
+                    message: 'User or chat does not exist' +
+                     '(either you or the chatmember to be deleted)'})
+            }
+        })
+        .catch((error) => response.status(400).send({message: 'SQL Error', error}))
+},
+// Deletes the user requested from the chat
+(request, response) => {
+    const theQuery = 'DELETE FROM ChatMembers WHERE chatid=$1 AND memberid=$2'
+    pool.query(theQuery, [request.params.chatid, request.query.p])
+        .then((result) => response.status(200).send({message: 'User was successfully ' +
+         'deleted from chat'}))
+        .catch((error) => response.status(400).send({message: 'SQL Error', error}))
+})
+
+/**
+ * @api {put} /chats/chatid/members Adds a user to a chat
+ */
+router.put('/:chatid/members/', (request, response, next) => {
+    if (request.query.p && !isNaN(request.query.p)) {
+        next()
+    } else {
+        // Missing or invalid p
+        response.status(400).send({message: 'p query is invalid or missing'})
+    }
+})
+
 module.exports = router

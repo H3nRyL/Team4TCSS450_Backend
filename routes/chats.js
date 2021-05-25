@@ -184,6 +184,31 @@ router.put('/:chatid/members/', (request, response, next) => {
         // Missing or invalid p
         response.status(400).send({message: 'p query is invalid or missing'})
     }
+},
+// Checks if chat exists
+(request, response, next) => {
+    const theQuery = 'SELECT * FROM ChatMembers WHERE chatid=$1' // TODO need to update
+    pool.query(theQuery, [request.params.chatid])
+        .then((result) => {
+            if (result.rowCount) {
+                next()
+            } else {
+                response.status(400).send({message: 'Chat does not exist'})
+            }
+        })
+        .catch((error) => response.status(400).send({message: 'SQL Error', error}))
+},
+(request, response) => {
+    const theQuery = 'INSERT INTO ChatMembers(chatid, memberid) VALUES($1, $2)'
+    pool.query(theQuery, [request.params.chatid, request.query.p])
+        .then((result) => response.status(200).send({message: 'Successfully Added'}))
+        .catch((error) => {
+            if (error.constraint === 'compositechatmembers') {
+                response.status(400).send({message: 'user has already been added'})
+            } else {
+                response.status(400).send({message: 'SQL Error', error})
+            }
+        })
 })
 
 module.exports = router

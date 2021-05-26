@@ -1,5 +1,81 @@
 [
   {
+    "type": "delete",
+    "url": "/auth",
+    "title": "Request to delete a Pushy Token for the user",
+    "name": "DeleteAuth",
+    "group": "Auth",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "string",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>Valid JSON Web Token JWT</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when the pushy token is deleted</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: Missing Parameters": [
+          {
+            "group": "400: Missing Parameters",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Missing required information&quot;</p>"
+          }
+        ],
+        "404: User Not Found": [
+          {
+            "group": "404: User Not Found",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;user not found&quot;</p>"
+          }
+        ],
+        "400: JSON Error": [
+          {
+            "group": "400: JSON Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;malformed JSON in parameters&quot;</p>"
+          }
+        ],
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the reported SQL error details</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/pushyregister.js",
+    "groupTitle": "Auth"
+  },
+  {
     "type": "get",
     "url": "/auth",
     "title": "Request to sign a user in the system",
@@ -225,6 +301,95 @@
   },
   {
     "type": "put",
+    "url": "/auth",
+    "title": "Request to insert a Pushy Token for the user",
+    "name": "PutAuth",
+    "group": "Auth",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "string",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>Valid JSON Web Token JWT</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "token",
+            "description": "<p>the Pushy Token of the user identified in the JWT</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when the pushy token is inserted</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: Missing Parameters": [
+          {
+            "group": "400: Missing Parameters",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Missing required information&quot;</p>"
+          }
+        ],
+        "404: User Not Found": [
+          {
+            "group": "404: User Not Found",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;user not found&quot;</p>"
+          }
+        ],
+        "400: JSON Error": [
+          {
+            "group": "400: JSON Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;malformed JSON in parameters&quot;</p>"
+          }
+        ],
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the reported SQL error details</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/pushyregister.js",
+    "groupTitle": "Auth"
+  },
+  {
+    "type": "put",
     "url": "/auth/changePassword",
     "title": "Request to change password",
     "name": "changePass",
@@ -298,7 +463,7 @@
     "groupTitle": "Auth"
   },
   {
-    "type": "get",
+    "type": "post",
     "url": "/auth/resetPassword",
     "title": "Change the password if forgotten, sends email with code",
     "name": "resetPass_Pt._1",
@@ -588,6 +753,78 @@
     "groupTitle": "Chats"
   },
   {
+    "type": "post",
+    "url": "/request",
+    "title": "handles accepting connection requests",
+    "name": "FriendRequest",
+    "group": "Contacts",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "int",
+            "optional": false,
+            "field": "the",
+            "description": "<p>contact id that invited you</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 201": [
+          {
+            "group": "Success 201",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when you accepted their invite</p>"
+          },
+          {
+            "group": "Success 201",
+            "type": "String",
+            "optional": false,
+            "field": "email",
+            "description": "<p>the email of the user inserted</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: Missing Parameters": [
+          {
+            "group": "400: Missing Parameters",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Missing required information&quot;</p>"
+          }
+        ],
+        "400: Other Error": [
+          {
+            "group": "400: Other Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;other error, see detail&quot;</p>"
+          },
+          {
+            "group": "400: Other Error",
+            "type": "String",
+            "optional": false,
+            "field": "detail",
+            "description": "<p>Information about th error</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/requests.js",
+    "groupTitle": "Contacts"
+  },
+  {
     "type": "get",
     "url": "/contacts",
     "title": "",
@@ -614,14 +851,14 @@
             "type": "boolean",
             "optional": false,
             "field": "success",
-            "description": "<p>true when the name is inserted</p>"
+            "description": "<p>true when contacts are returned</p>"
           },
           {
             "group": "Success 201",
-            "type": "String",
+            "type": "JSONArray",
             "optional": false,
-            "field": "email",
-            "description": "<p>the email of the user inserted</p>"
+            "field": "JSON",
+            "description": "<p>object with all of the contact information</p>"
           }
         ]
       }
@@ -651,6 +888,101 @@
     "version": "0.0.0",
     "filename": "routes/contacts.js",
     "groupTitle": "Contacts"
+  },
+  {
+    "type": "get",
+    "url": "/invites",
+    "title": "Gets all possible users that member is not friends with",
+    "name": "GetInvite",
+    "group": "Invites",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "memberid_a",
+            "description": "<p>the memberID of the requester</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "memberid_b",
+            "description": "<p>the memberID of the user receiving the request</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when the invite was sent</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/invites.js",
+    "groupTitle": "Invites"
+  },
+  {
+    "type": "post",
+    "url": "/invites",
+    "title": "Request to send an invite to another user",
+    "name": "PostInvite",
+    "group": "Invites",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "memberid_a",
+            "description": "<p>the memberID of the requester</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "memberid_b",
+            "description": "<p>the memberID of the user receiving the request</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 201": [
+          {
+            "group": "Success 201",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when the invite was sent</p>"
+          }
+        ],
+        "Success 202": [
+          {
+            "group": "Success 202",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>when the other users contact list is updated as well</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/invites.js",
+    "groupTitle": "Invites"
   },
   {
     "type": "get",
@@ -987,6 +1319,29 @@
     "version": "0.0.0",
     "filename": "routes/weather.js",
     "groupTitle": "OpenWeatherMap"
+  },
+  {
+    "type": "get",
+    "url": "/requuests",
+    "title": "Gets all pending friend requests",
+    "name": "GetRequests",
+    "group": "Requests",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when the invite was sent</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/requests.js",
+    "groupTitle": "Requests"
   },
   {
     "type": "get",

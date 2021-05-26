@@ -79,7 +79,7 @@ router.post('/',
  */
 router.get('/',
     // Checks if invite exists from the other member so we update it.
-    (request, response, next) => {
+    (request, response) => {
         const userid = request.decoded.memberid
         const values = [userid]
         const theQuery = "SELECT MemberID, FirstName, LastName, UserName, Email FROM Members WHERE Members.MemberID NOT IN (SELECT MemberID_B FROM Contacts WHERE MemberID_A = $1 OR MemberID_B = $1)"

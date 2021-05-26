@@ -5,6 +5,8 @@ const express = require('express')
 
 const validation = require('../utilities').validation
 
+const pool = require('../utilities').pool
+
 const isStringProvided = validation.isStringProvided
 
 // request module is needed to make a request to a web service
@@ -56,6 +58,70 @@ router.get('/', (req, res) => {
     } else {
         res.send({message: 'Missing required information'}).status(400)
     }
+})
+
+/**
+ * @api {post} /messages Request to add a message to a specific chat
+ * @apiName PostMessages
+ * @apiGroup Messages
+ *
+ * @apiDescription Adds the message from the user associated with the required JWT.
+ *
+ * @apiHeader {string} authorization Valid JSON Web Token JWT
+ *
+ * @apiParam {number} chatid the id of th chat to insert this message into NOTE: in body, not param
+ * @apiParam {string} message a message to store NOTE: in body, not param
+ *
+ * @apiSuccess {[]} message an array of messages in json format (need to update with pushy)
+ * @apiSuccess {number} message.messageid the id of the message
+ * @apiSuccess {number} message.chatid the chat id the message bleongs to
+ * @apiSuccess {string} message.message contents of the message
+ * @apiSuccess {number} message.memberid who made the message
+ * @apiSuccess {string} message.timestamp the time the message was sent
+ *
+ * @apiError (400: Unknown user) {String} message "unknown email address"
+ *
+ * @apiError (400: Missing Parameters) {String} message "Missing required information"
+ *
+ * @apiError (400: SQL Error) {String} message the reported SQL error details
+ *
+ * @apiError (400: Unknown Chat ID) {String} message "invalid chat id"
+ *
+ */
+// @apiSuccess (Success 201) {boolean} success true when the name is inserted
+router.post('/', (request, response, next) => {
+    // validate on empty parameters
+    if (!isStringProvided(request.body.lat) || !isStringProvided(request.body.lon) ||
+            !isStringProvided(request.body.nickname)) {
+        response.status(400).send({
+            message: 'Missing required information',
+        })
+    } else {
+        next()
+    }
+}, (request, response, next) => {
+    // adds the location to the database
+    const insert = `INSERT INTO Locations(MemberId, Nickname, Lat, Long)
+                  VALUES($1, $2, $3, $4)`
+    const values = [request.decoded.memberid, request.body.nickname,
+        request.body.lat, request.body.lon]
+    pool.query(insert, values)
+        .then((result) => {
+            if (result.rowCount == 1) {
+                // insertion success. Attach the message to the Response obj
+                response.status(200).send({success: true})
+                next()
+            } else {
+                response.status(400).send({
+                    'message': 'unknown error',
+                })
+            }
+        }).catch((err) => {
+            response.status(400).send({
+                message: 'SQL Error on insert',
+                error: err,
+            })
+        })
 })
 
 module.exports = router

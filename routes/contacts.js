@@ -11,37 +11,66 @@ const isStringProvided = validation.isStringProvided
 
 const router = express.Router();
 
-
-/* Preliminary search for 
-router.post('/', (request, response) => {
-        const first = request.body.first
-        const last = request.body.last
-        console.log(first,last)
-    if(isStringProvided(first) 
-            && isStringProvided(last)) {
-        const values = [first, last]
-        console.log(request.query.firstname, request.query.lastname)
-        const theQuery = 'SELECT MemberID, FirstName, LastName FROM Members;' 
-        + 'WHERE FirstName=$1 AND LastName=$2'
+/**
+ * @api {get} /contacts
+ * @apiName DeleteContacts
+ * @apiGroup Contacts
+ * @apiParam {String} the memberid to delete
+ * @apiSuccess (Success 200) {boolean} success true when contacts are removed from deleter
+ * @apiSuccess (Success 200) {boolean} success true when user removed from deletee
+ * @apiError (400: Missing Parameters) {String} message "Malformed SQL Query"
+ * @apiError (404: No contacts found) {String} message "You have no contacts"
+ **/
+/*
+router.post('/', 
+    (request, response, next) => {
+        const id = request.decoded.memberid
+        const other_id = request.body.deleteid
+        const values = [id, other_id]
+        const theQuery = "DELETE FROM Contacts WHERE (MemberID_A = $1 AND MemberID_B = $2 AND Verified = 1)"
         pool.query(theQuery, values)
-            .then((result) => {
-                if (result.rowCount > 0) {
-                    response.json({
-                        'first':result.rows[0].firstname,
-                        'email':result.rows[0].lastname,
-                    })
-                } else {
-                    response.status(404).send({message: 'No such user found'})
-                    return
-                }
+        .then((result) => {
+            if(result.rowCount > 0) {
+                response.status(200).send({
+                    success: true,
+                    message:"Contact removed!",
+                })
+                next()
+            } else {
+                response.status(200).send({
+                    success:false,
+                    message: "You were not friends with this user"
+                })
+            }
+        }) 
+        .catch((error) => {
+            response.status(400).send({
+                message: "Malformed SQL query", error
             })
-            .catch((error) => {
-                response.status(404).send({message: 'No such user found'})
-                return
-            })
-        }
-    })
+        })
+    },
+    (request, response) => {
+        const id = request.decoded.memberid
+        const other_id = request.body.deleteid
+        const values = [id, other_id]
+        const theQuery = "DELETE FROM Contacts WHERE (MemberID_A = $2 AND MemberID_B = $1 AND Verified = 1)"
+        pool.query(theQuery, values)
+        .then((result) => {
+            if(result.rowCount > 0) {
+                response.status(200).send({
+                    message:"Removed from their contacts!",
+                })
+            } else {
+                response.status(200).send({
+                    message: "You were not friends with this user"
+                })
+            }
+        }) 
+        .catch((error) => console.log(error))
+    },
+)
 */
+
 /**
  * @api {get} /contacts
  * @apiName GetContacts
@@ -52,14 +81,13 @@ router.post('/', (request, response) => {
  * @apiError (400: Missing Parameters) {String} message "Missing required information"
  * @apiError (404: No contacts found) {String} message "You have no contacts"
  **/
-router.get('/', (request, response) => {
+router.get('/', (request, response, next) => {
     
     var id = request.decoded.memberid.toString()
-    
     if(isStringProvided(id)) {
         const values = [id]
         const theQuery = "SELECT MemberID, FirstName, LastName, UserName, Email FROM Members WHERE Members.MemberID IN"
-        + " (SELECT MemberID_B FROM Contacts WHERE $1 = Contacts.MemberID_A AND Verified = 1)"
+        + " (SELECT MemberID_B FROM Contacts WHERE ($1 = Contacts.MemberID_A OR $1 = Contacts.MemberID_B) AND Verified = 1) AND MemberID <> $1"
         pool.query(theQuery, values)
             .then((result) => {
                     if(result.rowCount > 0) {
@@ -68,7 +96,9 @@ router.get('/', (request, response) => {
                             'data':result.rows,
                         })
                     } else {
-                        response.status(201).send({message: 'There are no contacts'})
+                        response.status(201).send({
+                            status:true,
+                            message: 'There are no contacts'})
                     }
             })
             .catch((error) => {
@@ -81,6 +111,7 @@ router.get('/', (request, response) => {
             message: 'Missing required information',
         })
     }
-})
+}),
+
 
 module.exports = router

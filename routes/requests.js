@@ -24,6 +24,7 @@ const router = express.Router();
  * @apiError (400: Other Error) {String} message "other error, see detail"
  * @apiError (400: Other Error) {String} detail Information about th error
  */
+/*
 router.post('/', 
     (request, response, next) => {
         const answer = request.body.answer
@@ -154,6 +155,7 @@ router.post('/',
         .catch((error) => console.log(error))
     },
 )
+*/
 /**
  * @api {get} /requuests Gets all pending friend requests
  * @apiName GetRequests
@@ -177,11 +179,16 @@ router.post('/',
                  'data': result.rows,
                  message: `Members have been returned`,
              })
+         } else {
+            response.status(200).send({
+                success:true,
+                message: `You are friends with all possible contacts! Congratulations!`,
+            })
          }
      })
      .catch((error) => {
          response.status(402).send({message:
-             'You are already friends with all possible contacts! Congratulations!', error})
+             "Error fetching pending requests", error})
      })
  })
 module.exports = router

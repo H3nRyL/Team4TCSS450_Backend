@@ -21,6 +21,7 @@ const router = express.Router();
  * @apiError (400: Missing Parameters) {String} message "Malformed SQL Query"
  * @apiError (404: No contacts found) {String} message "You have no contacts"
  **/
+/*
 router.post('/', 
     (request, response, next) => {
         const id = request.decoded.memberid
@@ -68,7 +69,7 @@ router.post('/',
         .catch((error) => console.log(error))
     },
 )
-
+*/
 
 /**
  * @api {get} /contacts
@@ -83,9 +84,6 @@ router.post('/',
 router.get('/', (request, response, next) => {
     
     var id = request.decoded.memberid.toString()
-    if(request.query.action === "delete") {
-        next()
-    }
     if(isStringProvided(id)) {
         const values = [id]
         const theQuery = "SELECT MemberID, FirstName, LastName, UserName, Email FROM Members WHERE Members.MemberID IN"
@@ -98,7 +96,9 @@ router.get('/', (request, response, next) => {
                             'data':result.rows,
                         })
                     } else {
-                        response.status(201).send({message: 'There are no contacts'})
+                        response.status(201).send({
+                            status:true,
+                            message: 'There are no contacts'})
                     }
             })
             .catch((error) => {

@@ -181,7 +181,7 @@ router.post('/',
              })
          } else {
             response.status(200).send({
-                success:true,
+                success:false,
                 message: `You are friends with all possible contacts! Congratulations!`,
             })
          }

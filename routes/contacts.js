@@ -97,7 +97,7 @@ router.get('/', (request, response, next) => {
                         })
                     } else {
                         response.status(201).send({
-                            status:true,
+                            success:false,
                             message: 'There are no contacts'})
                     }
             })

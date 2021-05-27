@@ -78,23 +78,27 @@ router.post('/',
  *
  */
 router.get('/',
-    // Checks if invite exists from the other member so we update it.
     (request, response) => {
         const userid = request.decoded.memberid
         const values = [userid]
         const theQuery = 'SELECT MemberID, FirstName, LastName, UserName, Email FROM Members WHERE Members.MemberID NOT IN (SELECT MemberID_B FROM Contacts WHERE MemberID_A = $1 OR MemberID_B = $1)'
         pool.query(theQuery, values)
-            .then((result) => {
-                if (result.rowCount > 0) {
-                    response.status(200).send({
-                        'success': true,
-                        'data': result.rows,
-                        'message': 'Members have been returned',
-                    })
-                }
-            })
-            .catch((error) => {
-                response.status(402).send({message:
+        .then((result) => {
+            if (result.rowCount > 0) {
+                response.status(200).send({
+                    success:true,
+                    'data': result.rows,
+                    message: `Members have been returned`,
+                })
+            } else {
+                response.status(200).send({
+                    success:false,
+                    message: "No invites found"
+                })
+            }
+        })
+        .catch((error) => {
+            response.status(402).send({message:
                 'You are already friends with all possible contacts! Congratulations!', error})
             })
     })

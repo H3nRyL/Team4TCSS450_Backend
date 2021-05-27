@@ -78,7 +78,6 @@ router.post('/',
  * 
  */
 router.get('/',
-    // Checks if invite exists from the other member so we update it.
     (request, response) => {
         const userid = request.decoded.memberid
         const values = [userid]
@@ -90,6 +89,11 @@ router.get('/',
                     success:true,
                     'data': result.rows,
                     message: `Members have been returned`,
+                })
+            } else {
+                response.status(200).send({
+                    success:false,
+                    message: "No invites found"
                 })
             }
         })

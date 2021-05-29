@@ -140,6 +140,19 @@ router.post('/', (request, response, next) => {
 })
 
 /**
+ * @api {get} /chats/:chatid Selects a list of emails and memberids
+ */
+router.get('/:chatid/', (request, response) => {
+    const theQuery = 'SELECT DISTINCT Members.memberid, email FROM ChatMembers' +
+    ' INNER JOIN Members ON chatid=$1 AND Members.memberid=ChatMembers.memberid ORDER BY email ASC'
+    pool.query(theQuery, [request.params.chatid])
+        .then((result) => {
+            if (result.rowCount) response.status(200).send(result.rows)
+        })
+        .catch((error) => response.status(400).send({error}))
+})
+
+/**
  * @api {delete} /chats/chatid/members Deletes a user belonging to chatid
  */
 router.delete('/:chatid/members/', (request, response, next) => {

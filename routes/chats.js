@@ -139,6 +139,7 @@ router.post('/', (request, response, next) => {
     })
 })
 
+// This does not check if you are a member of the chat
 /**
  * @api {get} /chats/:chatid Selects a list of emails and memberids
  */

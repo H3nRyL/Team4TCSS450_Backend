@@ -1,4 +1,4 @@
-const API_KEY = process.env
+const API_KEY = process.env.ZIPCODE_API
 
 // express is the framework we're going to use to handle requests
 const express = require('express')

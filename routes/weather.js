@@ -124,4 +124,47 @@ router.post('/', (request, response, next) => {
         })
 })
 
+
+/**
+ * @api {get} /chats/ Gets a list chats with timestamp and last message that the user belongs to
+ *
+ * @apiDescription Gets a list of chats that the user belongs to
+ *                  by their id as well as the last message sent and the timestamp it was sent
+ *
+ * @apiName getChats
+ * @apiGroup Chats
+ *
+ * @apiheader {string} Bearer Token a valid authorization JWT
+ * @apiError (400: SQL Error) {string} message Something broke during querying DB
+ * @apiSuccess {[]} chats an array of chats in json format
+ * @apiSuccess {string} chats.chatid The id of the chat
+ * @apiSuccess {string} chats.groupname The groupname of the chat
+ * @apiSuccess {string} chats.lastmessage The message text last sent
+ * @apiSuccess {string} chats.lasttimestamp The timestamp of the last message
+ */
+router.get('/get', (request, response, next) => {
+    const values = [request.decoded.memberid]
+    const theQuery = 'SELECT MemberID, Nickname, Lat, Long  FROM' +
+        'Locations WHERE MemberID = $1'
+    pool.query(theQuery, values)
+        .then((result) => {
+            if (result.rowCount > 0) {
+                response.status(201).json({
+                    'success': true,
+                    'data': result.rows,
+                })
+            } else {
+                response.status(201).send({
+                    success: false,
+                    message: 'There are no contacts'})
+            }
+        })
+        .catch((error) => {
+            response.status(400).send({
+                error: error,
+            })
+        })
+}),
+
+
 module.exports = router

@@ -24,16 +24,14 @@ router.post('/',
     (request, response, next) => {
         const first = request.body.first
         const last = request.body.last
-        const searchid = request.body.searchid.toString()
+        const searchid = request.body.searchid
         const email = request.body.email
-        if(isStringProvided(searchid) || isStringProvided(email)) {
-            next()
-        }
+        const id = request.decoded.memberid
+
         if(isStringProvided(first) 
                 && isStringProvided(last)) {
-            const values = [first, last]
-            console.log(request.query.firstname, request.query.lastname)
-            const theQuery = 'SELECT MemberID, FirstName, LastName, Email FROM Members WHERE FirstName=$1 AND LastName=$2'
+            const values = [first, last, id]
+            const theQuery = 'SELECT MemberID, FirstName, LastName, Email FROM Members WHERE FirstName=$1 AND LastName=$2 AND MemberID <> $3'
             pool.query(theQuery, values)
                 .then((result) => {
                     if (result.rowCount > 0) {
@@ -51,19 +49,18 @@ router.post('/',
                     response.status(404).send({message: "SQL Query error", error})
                     return
                 })
+            } else {
+                next()
             }
     },
-    (request, response) => {
-        const searchid = request.body.searchid.toString()
+    (request, response, next) => {
+        const searchid = request.body.searchid
         const email = request.body.email
-        if(isStringProvided(email)) {
-            next()
-        }
-        if(isStringProvided(searchid)) {
-            const values = [searchid]
-            console.log(request.query.firstname, request.query.lastname)
-            const theQuery = 'SELECT FirstName, LastName, Email FROM Members;' 
-            + 'WHERE MemberID = $1'
+        const id = request.decoded.memberid
+
+        if(!isStringProvided(email)) {
+            const values = [searchid, id]
+            const theQuery = 'SELECT FirstName, LastName, Email FROM Members WHERE MemberID = $1 AND MemberID <> $2'
             pool.query(theQuery, values)
                 .then((result) => {
                     if (result.rowCount > 0) {
@@ -81,15 +78,16 @@ router.post('/',
                     response.status(404).send({message: "SQL Query error", error})
                     return
                 })
+            } else {
+                next()
             }
     },
     (request, response) => {
         const email = request.body.email
+        const id = request.decoded.memberid
         if(isStringProvided(email)) {
-            const values = [email]
-            console.log(request.body.email)
-            const theQuery = 'SELECT FirstName, LastName, Email FROM Members;' 
-            + 'WHERE Email = $1'
+            const values = [email, id]
+            const theQuery = 'SELECT FirstName, LastName, Email FROM Members WHERE Email = $1 AND MemberID <> $2'
             pool.query(theQuery, values)
                 .then((result) => {
                     if (result.rowCount > 0) {
@@ -110,3 +108,5 @@ router.post('/',
             }
     },
 )
+
+module.exports = router

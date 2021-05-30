@@ -31,6 +31,7 @@ app.use('/messages', middleware.checkToken, require('./routes/messages'))
 app.use('/contacts', middleware.checkToken, require('./routes/connections/contacts'))
 app.use('/invites', middleware.checkToken, require('./routes/connections/invites'))
 app.use('/requests', middleware.checkToken, require('./routes/connections/requests'))
+app.use('/contactSearch', middleware.checkToken, require('./routes/connections/contactSearch'))
 
 app.use('/weather', middleware.checkToken, require('./routes/weather'))
 

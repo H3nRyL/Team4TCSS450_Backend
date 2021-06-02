@@ -50,7 +50,7 @@ router.post('/',
 
         const values = [userid, inviteeid]
         const theQuery =
-        'INSERT INTO Contacts (MemberID_A, MemberID_B, Verified) VALUES ($1, $2, 0)'
+        'INSERT INTO Contacts (MemberID_A, MemberID_B, Verified) VALUES ($1, $2, 0) RETURNING Verified'
         pool.query(theQuery, values)
             .then((result) => {
                 if (result.rows[0].verified === 0) {

@@ -88,7 +88,7 @@ router.post('/',
         const values = [id, requesterid]
         //*This query is responsible for updating the contact for the user. If a verified contact already exists, it will 
         //*do nothing
-        const theQuery = "INSERT INTO Contacts (MemberID_A, MemberID_B, Verified) VALUES ($1, $2, 1)"
+        const theQuery = "INSERT INTO Contacts (MemberID_A, MemberID_B, Verified) VALUES ($2, $1, 1)"
         pool.query(theQuery, values)
             .then((result) => {
                     if(result.rows[0].verified == 1) {

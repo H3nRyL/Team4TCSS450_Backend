@@ -96,7 +96,8 @@ router.post('/', (request, response, next) => {
     // add the message to the database
     const insert = `INSERT INTO Messages(ChatId, Message, MemberId)
                   VALUES($1, $2, $3) 
-                  RETURNING PrimaryKey AS MessageId, ChatId, Message, MemberId, TimeStamp`
+                  RETURNING PrimaryKey AS MessageId, ChatId, Message, MemberId, to_char(Messages.Timestamp AT TIME ZONE 'PDT', 
+                  'YYYY-MM-DD HH24:MI:SS.US') AS TimeStamp`
     const values = [request.body.chatid, request.body.message, request.decoded.memberid]
     pool.query(insert, values)
         .then((result) => {

@@ -36,9 +36,8 @@ router.post('/',
                 .then((result) => {
                     if (result.rowCount > 0) {
                         response.json({
-                            'first':result.rows[0].firstname,
-                            'email':result.rows[0].email,
-                            'memberid': result.rows[0].memberid
+                            success: true,
+                            data: response.rows
                         })
                     } else {
                         response.status(404).send({message: 'No such user found'})
@@ -65,9 +64,8 @@ router.post('/',
                 .then((result) => {
                     if (result.rowCount > 0) {
                         response.json({
-                            'first':result.rows[0].firstname,
-                            'last':result.rows[0].lastname,
-                            'email': result.rows[0].email
+                            success:true,
+                            data: response.rows
                         })
                     } else {
                         response.status(404).send({message: 'No such user found'})
@@ -92,9 +90,8 @@ router.post('/',
                 .then((result) => {
                     if (result.rowCount > 0) {
                         response.json({
-                            'first':result.rows[0].firstname,
-                            'last':result.rows[0].lastname,
-                            'memberid': result.rows[0].memberid
+                            success:true,
+                            response: result.rows
                         })
                     } else {
                         response.status(404).send({message: 'No such user found'})

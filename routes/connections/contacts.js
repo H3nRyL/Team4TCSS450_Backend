@@ -21,7 +21,7 @@ const router = express.Router();
  * @apiError (400: Missing Parameters) {String} message "Malformed SQL Query"
  * @apiError (404: No contacts found) {String} message "You have no contacts"
  **/
-/*
+
 router.post('/', 
     (request, response, next) => {
         const id = request.decoded.memberid
@@ -69,7 +69,7 @@ router.post('/',
         .catch((error) => console.log(error))
     },
 )
-*/
+
 
 /**
  * @api {get} /contacts
@@ -81,13 +81,13 @@ router.post('/',
  * @apiError (400: Missing Parameters) {String} message "Missing required information"
  * @apiError (404: No contacts found) {String} message "You have no contacts"
  **/
-router.get('/', (request, response, next) => {
+router.get('/', (request, response) => {
     
-    var id = request.decoded.memberid.toString()
+    var id = request.decoded.memberid
     if(isStringProvided(id)) {
         const values = [id]
         const theQuery = "SELECT MemberID, FirstName, LastName, UserName, Email FROM Members WHERE Members.MemberID IN"
-        + " (SELECT MemberID_B FROM Contacts WHERE ($1 = Contacts.MemberID_A OR $1 = Contacts.MemberID_B) AND Verified = 1) AND MemberID <> $1"
+        + " (SELECT MemberID_B, MemberID_A FROM Contacts WHERE ($1 = Contacts.MemberID_A OR $1 = Contacts.MemberID_B) AND Verified = 1) AND MemberID <> $1"
         pool.query(theQuery, values)
             .then((result) => {
                     if(result.rowCount > 0) {

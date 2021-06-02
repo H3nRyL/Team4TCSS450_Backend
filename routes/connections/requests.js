@@ -156,7 +156,7 @@ router.post('/',
  (request, response) => {
      const userid = request.decoded.memberid
      const values = [userid]
-     const theQuery = "SELECT FirstName, LastName, MemberID FROM Members INNER JOIN Contacts ON Members.MemberID = Contacts.MemberID_B WHERE Contacts.MemberID_B = $1"
+     const theQuery = "SELECT FirstName, LastName, MemberID FROM Members INNER JOIN Contacts ON Members.MemberID = Contacts.MemberID_B WHERE Contacts.MemberID_B = $1 AND Members.MemberID <> $1"
      pool.query(theQuery, values)
      .then((result) => {
          if (result.rowCount > 0) {

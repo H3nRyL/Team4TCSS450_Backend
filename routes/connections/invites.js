@@ -50,7 +50,7 @@ router.post('/',
 
         const values = [userid, inviteeid]
         const theQuery =
-        'INSERT INTO Contacts (memberid_a, memberid_b) VALUES ($1, $2) IF NOT EXISTS (SELECT MemberID_A, MemberID_B FROM Contacts WHERE MemberID_A = $1 AND MemberID_B = $2) RETURNING verified'
+        'INSERT INTO Contacts (MemberID_A, MemberID_B, Verified) VALUES ($1, $2, 0)'
         pool.query(theQuery, values)
             .then((result) => {
                 if (result.rows[0].verified === 0) {
@@ -81,7 +81,7 @@ router.get('/',
     (request, response) => {
         const userid = request.decoded.memberid
         const values = [userid]
-        const theQuery = "SELECT MemberID, FirstName, LastName, UserName, Email FROM Members WHERE Members.MemberID NOT IN (SELECT MemberID_B FROM Contacts WHERE MemberID_A = $1 OR MemberID_B = $1) AND Members.MemberID <> $1"
+        const theQuery = "SELECT DISTINCT MemberID, FirstName, LastName, Email, Members.UserName FROM Members WHERE MemberID NOT IN (SELECT MemberID_A FROM Contacts WHERE MemberID_A = $1 or MemberID_B = $1) AND MemberID <> $1 AND MemberID NOT IN(SELECT MemberID_B FROM Contacts WHERE MemberID_A = $1 or MemberID_B = $1)"
         pool.query(theQuery, values)
         .then((result) => {
             if (result.rowCount > 0) {

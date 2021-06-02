@@ -144,8 +144,9 @@ router.post('/', (request, response, next) => {
  */
 router.get('/get', (request, response, next) => {
     const values = [request.decoded.memberid]
-    const theQuery = 'SELECT MemberID, Nickname, Lat, Long  FROM' +
-        'Locations WHERE MemberID = $1'
+    const theQuery = 'SELECT MemberID, Nickname, Lat, Long, ZIP  FROM ' +
+        'Locations WHERE MemberID = $1';
+    console.log(values)
     pool.query(theQuery, values)
         .then((result) => {
             if (result.rowCount > 0) {
@@ -156,7 +157,7 @@ router.get('/get', (request, response, next) => {
             } else {
                 response.status(201).send({
                     success: false,
-                    message: 'There are no contacts'})
+                    message: 'There are no locations'})
             }
         })
         .catch((error) => {

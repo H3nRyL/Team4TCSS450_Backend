@@ -29,11 +29,11 @@ const router = express.Router()
  * zipcodeapi.com api key with this endpoint. Enjoy!
  */
 router.get('/', (req, res) => {
-    if (isStringProvided(req.query.zipcode)) {
+    if (isStringProvided(req.query.zip)) {
         // for info on use of tilde (`) making a String literal, see below.
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
         const url = `https://www.zipcodeapi.com/rest/${API_KEY}/info.json/`+
-            `${req.query.zipcode}/degrees`
+            `${req.query.zip}/degrees`
 
         // When this web service gets a request, make a request to the Zipcode api service
         request(url, function(error, response, body) {

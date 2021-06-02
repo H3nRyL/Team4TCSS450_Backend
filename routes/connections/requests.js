@@ -144,19 +144,19 @@ router.post('/',
  (request, response) => {
      const userid = request.decoded.memberid
      const values = [userid]
-     const theQuery = "SELECT FirstName, LastName, MemberID FROM Members JOIN Contacts ON Members.MemberID = Contacts.MemberID_B WHERE Contacts.MemberID_B = $1 AND Members.MemberID <> $1 AND Verified = 0"
+     const theQuery = "SELECT DISTINCT FirstName, LastName, Contacts.MemberID_A FROM Members JOIN Contacts ON Members.MemberID = Contacts.MemberID_B WHERE Contacts.MemberID_B = $1 AND Verified = 0"
      pool.query(theQuery, values)
      .then((result) => {
          if (result.rowCount > 0) {
              response.status(200).send({
                  success:true,
                  'data': result.rows,
-                 message: `Members have been returned`,
+                 message: `Requests have been returned`,
              })
          } else {
             response.status(200).send({
                 success:false,
-                message: `You are friends with all possible contacts! Congratulations!`,
+                message: `You have no requests`,
             })
          }
      })

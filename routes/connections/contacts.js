@@ -83,11 +83,10 @@ router.post('/',
  **/
 router.get('/', (request, response) => {
     
-    var id = request.decoded.memberid
+    var id = request.decoded.memberid.toString()
     if(isStringProvided(id)) {
         const values = [id]
-        const theQuery = "SELECT MemberID, FirstName, LastName, UserName, Email FROM Members WHERE Members.MemberID IN"
-        + " (SELECT MemberID_B, MemberID_A FROM Contacts WHERE ($1 = Contacts.MemberID_A OR $1 = Contacts.MemberID_B) AND Verified = 1) AND MemberID <> $1"
+        const theQuery = "SELECT DISTINCT Members.MemberID, Members.FirstName, Members.LastName, Members.Email, Members.UserName FROM Members RIGHT JOIN Contacts ON Members.MemberID = Contacts.MemberID_A WHERE Contacts.MemberID_A = $1 OR Contacts.MemberID_B = $1 AND Contacts.Verified = 1;"
         pool.query(theQuery, values)
             .then((result) => {
                     if(result.rowCount > 0) {

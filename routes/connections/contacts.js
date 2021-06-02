@@ -86,9 +86,9 @@ router.get('/', (request, response) => {
     var id = request.decoded.memberid.toString()
     if(isStringProvided(id)) {
         const values = [id]
-        const theQuery = "SELECT DISTINCT FirstName, LastName, MemberID, Email, UserName FROM Members JOIN Contacts ON Members.MemberID = Contacts.MemberID_A WHERE Members.MemberID <> $1"
+        const theQuery = "SELECT DISTINCT FirstName, LastName, MemberID, Email, UserName FROM Members JOIN Contacts ON Members.MemberID = Contacts.MemberID_A WHERE Members.MemberID <> $1 AND Contacts.Verified = 1"
                                 +"UNION "
-                                +"SELECT DISTINCT FirstName, LastName, MemberID, Email, UserName FROM Members JOIN Contacts ON Members.MemberID = Contacts.MemberID_A WHERE Members.MemberID <> $1"
+                                +"SELECT DISTINCT FirstName, LastName, MemberID, Email, UserName FROM Members JOIN Contacts ON Members.MemberID = Contacts.MemberID_A WHERE Members.MemberID <> $1 AND Contacts.Verified = 1"
         pool.query(theQuery, values)
             .then((result) => {
                     if(result.rowCount > 0) {

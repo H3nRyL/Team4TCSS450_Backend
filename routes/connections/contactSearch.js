@@ -24,8 +24,6 @@ router.post('/',
     (request, response, next) => {
         const first = request.body.first
         const last = request.body.last
-        const searchid = request.body.searchid
-        const email = request.body.email
         const id = request.decoded.memberid
 
         if(isStringProvided(first) 
@@ -36,9 +34,8 @@ router.post('/',
                 .then((result) => {
                     if (result.rowCount > 0) {
                         response.json({
-                            'first':result.rows[0].firstname,
-                            'email':result.rows[0].email,
-                            'memberid': result.rows[0].memberid
+                            success: true,
+                            data: result.rows
                         })
                     } else {
                         response.status(404).send({message: 'No such user found'})
@@ -46,7 +43,7 @@ router.post('/',
                     }
                 })
                 .catch((error) => {
-                    response.status(404).send({message: "SQL Query error", error})
+                    response.status(404).send({message: "SQL Query error1", error})
                     return
                 })
             } else {
@@ -65,9 +62,8 @@ router.post('/',
                 .then((result) => {
                     if (result.rowCount > 0) {
                         response.json({
-                            'first':result.rows[0].firstname,
-                            'last':result.rows[0].lastname,
-                            'email': result.rows[0].email
+                            success:true,
+                            data: result.rows
                         })
                     } else {
                         response.status(404).send({message: 'No such user found'})
@@ -92,9 +88,8 @@ router.post('/',
                 .then((result) => {
                     if (result.rowCount > 0) {
                         response.json({
-                            'first':result.rows[0].firstname,
-                            'last':result.rows[0].lastname,
-                            'memberid': result.rows[0].memberid
+                            success:true,
+                            response: result.rows
                         })
                     } else {
                         response.status(404).send({message: 'No such user found'})

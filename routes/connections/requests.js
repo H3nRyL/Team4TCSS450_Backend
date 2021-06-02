@@ -36,7 +36,6 @@ router.post('/',
         if(answer === "Decline") {
             pool.query(theQuery, values)
             .then((result) => {
-                console.log(result)
                 if(result.rowCount > 0) {
                     response.status(200).send({
                         success:true,
@@ -62,9 +61,6 @@ router.post('/',
     },
     (request, response, next) => {
         const answer = request.body.answer
-        if(answer === "Decline") {
-            next()
-        }
         const id = request.decoded.memberid
         const requesterid = request.body.requesterid
         const values = [id, requesterid]
@@ -87,9 +83,6 @@ router.post('/',
     },
     (request, response, next) => {
         const answer = request.body.answer
-        if(answer === "Decline") {
-            next()
-        }
         const id = request.decoded.memberid
         const requesterid = request.body.requesterid
         const values = [id, requesterid]
@@ -111,11 +104,8 @@ router.post('/',
             })
     },
     
-    (request, response, next) => {
+    (request, response) => {
         const answer = request.body.answer
-        if(answer === "Decline") {
-            next()
-        }
         const id = request.decoded.memberid
         const requesterid = request.body.requesterid
         const values = [id, requesterid]
@@ -139,8 +129,6 @@ router.post('/',
                     })
             })
     },
-
-    
 )
 
 /**
@@ -156,7 +144,7 @@ router.post('/',
  (request, response) => {
      const userid = request.decoded.memberid
      const values = [userid]
-     const theQuery = "SELECT FirstName, LastName, MemberID FROM Members INNER JOIN Contacts ON Members.MemberID = Contacts.MemberID_B WHERE Contacts.MemberID_B = $1"
+     const theQuery = "SELECT FirstName, LastName, MemberID FROM Members JOIN Contacts ON Members.MemberID = Contacts.MemberID_B WHERE Contacts.MemberID_B = $1 AND Members.MemberID <> $1 AND Verified = 0"
      pool.query(theQuery, values)
      .then((result) => {
          if (result.rowCount > 0) {

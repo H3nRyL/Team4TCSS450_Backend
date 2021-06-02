@@ -81,7 +81,7 @@ router.get('/',
     (request, response) => {
         const userid = request.decoded.memberid
         const values = [userid]
-        const theQuery = "SELECT DISTINCT MemberID, FirstName, LastName, Email, Members.UserName FROM Members WHERE MemberID NOT IN (SELECT MemberID_A FROM Contacts WHERE MemberID_A = $1 or MemberID_B = $1 AND MemberID <> $1) AND MemberID NOT IN(SELECT MemberID_B FROM Contacts WHERE MemberID_A = $1 or MemberID_B = $1) AND MemberID <> $1"
+        const theQuery = "SELECT DISTINCT MemberID, FirstName, LastName, Email, Members.UserName FROM Members WHERE MemberID NOT IN (SELECT MemberID_A FROM Contacts WHERE MemberID_A = $1 or MemberID_B = $1) AND MemberID <> $1 AND MemberID NOT IN(SELECT MemberID_B FROM Contacts WHERE MemberID_A = $1 or MemberID_B = $1)"
         pool.query(theQuery, values)
         .then((result) => {
             if (result.rowCount > 0) {

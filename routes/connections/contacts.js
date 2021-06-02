@@ -79,7 +79,7 @@ router.post('/',
  * @apiSuccess (Success 201) {boolean} success true when contacts are returned
  * @apiSuccess (Success 201) {JSONArray} JSON object with all of the contact information
  * @apiError (400: Missing Parameters) {String} message "Missing required information"
- * @apiError (404: No contacts found) {String} message "You have no contacts"
+ * @apiError (401: No contacts found) {String} message "You have no contacts"
  **/
 router.get('/', (request, response) => {
     
@@ -101,8 +101,8 @@ router.get('/', (request, response) => {
                     }
             })
             .catch((error) => {
-                    response.status(400).send({
-                        error:error
+                    response.status(401).send({
+                        message:"Malformed SQL Query" + error
                     })
             })
     } else {
@@ -111,6 +111,5 @@ router.get('/', (request, response) => {
         })
     }
 }),
-
 
 module.exports = router

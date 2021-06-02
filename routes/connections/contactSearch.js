@@ -24,8 +24,6 @@ router.post('/',
     (request, response, next) => {
         const first = request.body.first
         const last = request.body.last
-        const searchid = request.body.searchid
-        const email = request.body.email
         const id = request.decoded.memberid
 
         if(isStringProvided(first) 
@@ -37,7 +35,7 @@ router.post('/',
                     if (result.rowCount > 0) {
                         response.json({
                             success: true,
-                            data: response.rows
+                            data: result.rows
                         })
                     } else {
                         response.status(404).send({message: 'No such user found'})
@@ -45,7 +43,7 @@ router.post('/',
                     }
                 })
                 .catch((error) => {
-                    response.status(404).send({message: "SQL Query error", error})
+                    response.status(404).send({message: "SQL Query error1", error})
                     return
                 })
             } else {
@@ -65,7 +63,7 @@ router.post('/',
                     if (result.rowCount > 0) {
                         response.json({
                             success:true,
-                            data: response.rows
+                            data: result.rows
                         })
                     } else {
                         response.status(404).send({message: 'No such user found'})

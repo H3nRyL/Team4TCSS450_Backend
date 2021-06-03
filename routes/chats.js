@@ -3,6 +3,8 @@ const express = require('express')
 // Access the connection to Heroku Database
 const pool = require('../utilities').pool
 
+const notifyOthers = require('../utilities/exports').messaging
+
 const {validation} = require('../utilities')
 const isStringProvided = validation.isStringProvided
 
@@ -40,7 +42,8 @@ router.get('/', (request, response) => {
                         '') 
                         AS message, 
                     COALESCE(
-                        (SELECT timestamp 
+                        (SELECT to_char(Messages.Timestamp AT TIME ZONE 'PDT', 
+                        'YYYY-MM-DD HH24:MI:SS.US' )
                         FROM Messages 
                         WHERE chatid = c.chatid 
                         ORDER BY timestamp DESC 
@@ -97,18 +100,12 @@ router.post('/', (request, response, next) => {
         next()
     }
 },
-// Create a new chat with the owner and group name
-// TODO transactions
-//  I just remembered transactions from the DB course to just do this all at once and remove if fail
-// TODO At the moment, this assumes the memberid and chatid are valid
-// - Steven
 (request, response, next) => {
     const query = 'INSERT INTO Chats(ownerid, groupname) VALUES($1, $2) RETURNING chatid'
     const values = [request.decoded.memberid, request.body.groupname]
 
     pool.query(query, values)
         .then((result) => {
-            // TODO async and multiple run at the same time?
             request.metaInfo = {chatid: result.rows[0].chatid}
             next()
         })
@@ -118,8 +115,7 @@ router.post('/', (request, response, next) => {
 },
 
 // Add the users as chatmembers to the corresponding chat based on their memberid
-(request, response) => {
-    // TODO need to convert the user first and last to their id
+(request, response, next) => {
     const chatMembers = request.body.users
     // Query to be concatenated
     let query = 'INSERT INTO ChatMembers(chatid, memberid) VALUES '
@@ -128,15 +124,34 @@ router.post('/', (request, response, next) => {
         query += `(${request.metaInfo.chatid}, ${chatMembers[i]}), `
     }
 
-    query += `(${request.metaInfo.chatid}, ${request.decoded.memberid})`
+    query += `(${request.metaInfo.chatid}, ${request.decoded.memberid}) `
+
     pool.query(query, (err, res) => {
         if (err) {
             response.status(400).send({message: 'SQL Error. Created chat but did not add users',
                 err})
         } else {
-            response.status(200).send({chatid: request.metaInfo.chatid})
+            next()
         }
     })
+},
+// pushy to all individuals
+(request, response) => {
+    const query = `SELECT token FROM Push_Token
+                        INNER JOIN ChatMembers ON
+                        Push_Token.memberid=ChatMembers.memberid
+                        WHERE ChatMembers.chatid=$1`
+    pool.query(query, [request.metaInfo.chatid])
+        .then((result) => {
+            result.rows.forEach((entry) => {
+                notifyOthers.sendChatCreationToIndividual(entry.token, request.body.groupname)
+            })
+            response.status(200).send({chatid: request.metaInfo.chatid})
+        })
+        .catch((error) => {
+            response.status(400).send({message: 'SQL Error. push token',
+                error})
+        })
 })
 
 // This does not check if you are a member of the chat
@@ -192,7 +207,7 @@ router.delete('/:chatid/members/', (request, response, next) => {
  * @api {put} /chats/chatid/members Adds a user to a chat
  */
 router.put('/:chatid/members/', (request, response, next) => {
-    if (request.query.p && !isNaN(request.query.p)) {
+    if (request.query.p && validateEmail(request.query.p)) {
         next()
     } else {
         // Missing or invalid p
@@ -201,7 +216,7 @@ router.put('/:chatid/members/', (request, response, next) => {
 },
 // Checks if chat exists
 (request, response, next) => {
-    const theQuery = 'SELECT * FROM ChatMembers WHERE chatid=$1' // TODO need to update
+    const theQuery = 'SELECT * FROM ChatMembers WHERE chatid=$1'
     pool.query(theQuery, [request.params.chatid])
         .then((result) => {
             if (result.rowCount) {
@@ -212,9 +227,24 @@ router.put('/:chatid/members/', (request, response, next) => {
         })
         .catch((error) => response.status(400).send({message: 'SQL Error', error}))
 },
+// Get email of user
+(request, response, next) => {
+    let theQuery = 'SELECT memberid FROM Members WHERE email=\''
+    theQuery += request.query.p + '\''
+    pool.query(theQuery, [])
+        .then((result) => {
+            if (result.rowCount) {
+                request.id = result.rows[0].memberid
+                next()
+            } else {
+                response.status(400).send({message: 'User does not exist'})
+            }
+        })
+        .catch((error) => response.status(400).send({message: 'SQL Error', error}))
+},
 (request, response) => {
     const theQuery = 'INSERT INTO ChatMembers(chatid, memberid) VALUES($1, $2)'
-    pool.query(theQuery, [request.params.chatid, request.query.p])
+    pool.query(theQuery, [request.params.chatid, request.id])
         .then((result) => response.status(200).send({message: 'Successfully Added'}))
         .catch((error) => {
             if (error.constraint === 'compositechatmembers') {
@@ -224,5 +254,16 @@ router.put('/:chatid/members/', (request, response, next) => {
             }
         })
 })
+
+/**
+ * checks if email is valid
+ *
+ * @param {string} email email of user
+ * @return {boolean} true if valid email format; otherwise false
+ */
+ function validateEmail(email) {
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    return re.test(String(email).toLowerCase())
+}
 
 module.exports = router

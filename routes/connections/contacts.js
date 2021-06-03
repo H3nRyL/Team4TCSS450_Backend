@@ -28,9 +28,10 @@ router.post('/',
         const other_id = request.body.deleteid
         console.log(request.body)
         const values = [id, other_id]
-        const theQuery = "DELETE FROM Contacts WHERE (MemberID_A = $1 AND MemberID_B = $2)"
+        const theQuery = "DELETE FROM Contacts WHERE (MemberID_A = $2 AND MemberID_B = $1) AND Verified = 1 RETURNING Verified"
         pool.query(theQuery, values)
         .then((result) => {
+            console.log(result)
             if(result.rowCount > 0) {
                 next()
             } else {
@@ -50,7 +51,7 @@ router.post('/',
         const id = request.decoded.memberid
         const other_id = request.body.deleteid
         const values = [id, other_id]
-        const theQuery = "DELETE FROM Contacts WHERE (MemberID_A = $2 AND MemberID_B = $1 AND Verified = 1)"
+        const theQuery = "DELETE FROM Contacts WHERE (MemberID_A = $1 AND MemberID_B = $2) AND Verified = 1 RETURNING Verified"
         pool.query(theQuery, values)
         .then((result) => {
             if(result.rowCount > 0) {

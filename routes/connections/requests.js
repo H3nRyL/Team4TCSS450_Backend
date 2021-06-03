@@ -34,6 +34,7 @@ router.post('/',
         const theQuery = "DELETE FROM Contacts WHERE (MemberID_A = $1 AND MemberID_B = $2 AND Verified = 0)"
         const answer = request.body.answer
         if(answer === "Decline") {
+            console.log(answer)
             pool.query(theQuery, values)
             .then((result) => {
                 if(result.rowCount > 0) {
@@ -51,7 +52,7 @@ router.post('/',
                 }
             }) 
             .catch((error) => {
-                response.status(400).send({
+                response.status(402).send({
                     message: "Malformed SQL query", error
                 })
             })
@@ -60,50 +61,25 @@ router.post('/',
         }
     },
     (request, response, next) => {
-        const answer = request.body.answer
         const id = request.decoded.memberid
         const requesterid = request.body.requesterid
-        const values = [id, requesterid]
+        const values = [requesterid, id]
         //TODO This assumes that the request is already in contacts and does not contain a check. It updates the
         //invitees contacts, but not the users
-        const theQuery = "UPDATE Contacts SET Verified = 1 WHERE MemberID_A = $2 AND MemberID_B = $1 RETURNING Verified"
+        const theQuery = "UPDATE Contacts SET Verified = 1 WHERE MemberID_A = $1 AND MemberID_B = $2 RETURNING Verified"
         pool.query(theQuery, values)
             .then((result) => {
-                    if(result.rows[0].verified == 1) {
+                    console.log(result)
+                    if(result.rowCount > 0) {
                         next()
-                    } else {
-                        response.status(404).send({message: 'This invitation does not exist'})
                     }
             })
             .catch((error) => {
-                    response.status(400).send({
+                    response.status(402).send({
                         message: "Failed to accept 1" + error
                     })
             })
     },
-    (request, response, next) => {
-        const answer = request.body.answer
-        const id = request.decoded.memberid
-        const requesterid = request.body.requesterid
-        const values = [id, requesterid]
-        //*This query is responsible for updating the contact for the user. If a verified contact already exists, it will 
-        //*do nothing
-        const theQuery = "INSERT INTO Contacts (MemberID_A, MemberID_B, Verified) VALUES ($2, $1, 1)"
-        pool.query(theQuery, values)
-            .then((result) => {
-                    if(result.rows[0].verified == 1) {
-                        next()
-                    } else {
-                        response.status(404).send({message: 'This invitation does not exist'})
-                    }
-            })
-            .catch((error) => {
-                    response.status(400).send({
-                        error:error
-                    })
-            })
-    },
-    
     (request, response) => {
         const answer = request.body.answer
         const id = request.decoded.memberid
@@ -111,20 +87,15 @@ router.post('/',
         const values = [id, requesterid]
         //*This query is responsible for updating the contact for the user. If a verified contact already exists, it will 
         //*do nothing
-        const theQuery = "INSERT INTO Contacts (MemberID_A, MemberID_B, Verified) VALUES ($1, $2, 1) ON CONFLICT (Verified) DO UPDATE SET Verified = 1"
+        const theQuery = "INSERT INTO Contacts (MemberID_A, MemberID_B, Verified) VALUES ($1, $2, 1)"
         pool.query(theQuery, values)
             .then((result) => {
-                    if(result.rows[0].verified == 1) {
-                        response.status(201).json({
-                            message:"You've been connected with user!"
-                        })
+                    if(result.rowCount > 0) {
                         return
-                    } else {
-                        response.status(404).send({message: 'This invitation does not exist'})
                     }
             })
             .catch((error) => {
-                    response.status(400).send({
+                    response.status(402).send({
                         error:error
                     })
             })
@@ -144,7 +115,7 @@ router.post('/',
  (request, response) => {
      const userid = request.decoded.memberid
      const values = [userid]
-     const theQuery = "SELECT DISTINCT FirstName, LastName, Contacts.MemberID_A AS memberid FROM Members JOIN Contacts ON Members.MemberID = Contacts.MemberID_B WHERE Contacts.MemberID_B = $1 AND Verified = 0"
+     const theQuery = "SELECT DISTINCT FirstName, LastName, Contacts.MemberID_A AS memberid FROM Members JOIN Contacts ON Members.MemberID = Contacts.MemberID_A WHERE Contacts.MemberID_B = $1 AND Verified = 0 AND Contacts.MemberID_A <> $1"
      pool.query(theQuery, values)
      .then((result) => {
          if (result.rowCount > 0) {

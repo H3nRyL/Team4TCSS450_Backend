@@ -20,14 +20,13 @@ const router = express.Router();
  * @apiError (400: Missing Parameters) {String} message "Malformed SQL Query"
  * @apiError (400: No user found) {String} message "You have no contacts"
  **/
-router.post('/', 
+router.get('/', 
     (request, response, next) => {
-        const first = request.body.first
-        const last = request.body.last
+        const search = request.params.search
+        const type = request.params.type
         const id = request.decoded.memberid
 
-        if(isStringProvided(first) 
-                && isStringProvided(last)) {
+        if(type === "name") {
             const values = [first, last, id]
             const theQuery = 'SELECT MemberID, FirstName, LastName, Email FROM Members WHERE FirstName=$1 AND LastName=$2 AND MemberID <> $3'
             pool.query(theQuery, values)
@@ -51,11 +50,12 @@ router.post('/',
             }
     },
     (request, response, next) => {
-        const searchid = request.body.searchid
-        const email = request.body.email
+
+        const search = request.params.search
+        const type = request.params.type
         const id = request.decoded.memberid
 
-        if(!isStringProvided(email)) {
+        if(type === id) {
             const values = [searchid, id]
             const theQuery = 'SELECT FirstName, LastName, Email FROM Members WHERE MemberID = $1 AND MemberID <> $2'
             pool.query(theQuery, values)
@@ -79,7 +79,7 @@ router.post('/',
             }
     },
     (request, response) => {
-        const email = request.body.email
+        const email = request.params.search
         const id = request.decoded.memberid
         if(isStringProvided(email)) {
             const values = [email, id]
@@ -92,7 +92,7 @@ router.post('/',
                             response: result.rows
                         })
                     } else {
-                        response.status(404).send({message: 'No such user found'})
+                        response.status(404).send({message: 'Invalid email'})
                         return
                     }
                 })

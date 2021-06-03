@@ -26,15 +26,12 @@ router.post('/',
     (request, response, next) => {
         const id = request.decoded.memberid
         const other_id = request.body.deleteid
+        console.log(request.body)
         const values = [id, other_id]
-        const theQuery = "DELETE FROM Contacts WHERE (MemberID_A = $1 AND MemberID_B = $2 AND Verified = 1)"
+        const theQuery = "DELETE FROM Contacts WHERE (MemberID_A = $1 AND MemberID_B = $2)"
         pool.query(theQuery, values)
         .then((result) => {
             if(result.rowCount > 0) {
-                response.status(200).send({
-                    success: true,
-                    message:"Contact removed!",
-                })
                 next()
             } else {
                 response.status(200).send({
@@ -58,7 +55,7 @@ router.post('/',
         .then((result) => {
             if(result.rowCount > 0) {
                 response.status(200).send({
-                    message:"Removed from their contacts!",
+                    message:"Contact Deleted!",
                 })
             } else {
                 response.status(200).send({
@@ -86,9 +83,7 @@ router.get('/', (request, response) => {
     var id = request.decoded.memberid.toString()
     if(isStringProvided(id)) {
         const values = [id]
-        const theQuery = "SELECT DISTINCT FirstName, LastName, MemberID, Email, UserName FROM Members JOIN Contacts ON Members.MemberID = Contacts.MemberID_A WHERE Members.MemberID <> $1 AND Contacts.Verified = 1"
-                                +"UNION "
-                                +"SELECT DISTINCT FirstName, LastName, MemberID, Email, UserName FROM Members JOIN Contacts ON Members.MemberID = Contacts.MemberID_A WHERE Members.MemberID <> $1 AND Contacts.Verified = 1"
+        const theQuery = "SELECT FirstName, LastName, MemberID, Email, UserName FROM Members WHERE MemberID IN (SELECT MemberID_A FROM Contacts WHERE MemberID_B = $1 AND Verified = 1) OR MemberID IN (SELECT MemberID_B FROM Contacts WHERE MemberID_A = $1 AND Verified = 1)"
         pool.query(theQuery, values)
             .then((result) => {
                     if(result.rowCount > 0) {

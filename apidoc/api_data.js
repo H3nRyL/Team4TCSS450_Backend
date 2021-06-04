@@ -825,84 +825,6 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/chats/",
-    "title": "Gets a list chats with timestamp and last message that the user belongs to",
-    "description": "<p>Gets a list of chats that the user belongs to by their id as well as the last message sent and the timestamp it was sent</p>",
-    "name": "getChats",
-    "group": "Chats",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "string",
-            "optional": false,
-            "field": "Bearer",
-            "description": "<p>Token a valid authorization JWT</p>"
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "400: SQL Error": [
-          {
-            "group": "400: SQL Error",
-            "type": "string",
-            "optional": false,
-            "field": "message",
-            "description": "<p>Something broke during querying DB</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "[]",
-            "optional": false,
-            "field": "chats",
-            "description": "<p>an array of chats in json format</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "chats.chatid",
-            "description": "<p>The id of the chat</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "chats.groupname",
-            "description": "<p>The groupname of the chat</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "chats.lastmessage",
-            "description": "<p>The message text last sent</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "chats.lasttimestamp",
-            "description": "<p>The timestamp of the last message</p>"
-          }
-        ]
-      }
-    },
-    "version": "0.0.0",
-    "filename": "routes/weather.js",
-    "groupTitle": "Chats"
-  },
-  {
-    "type": "get",
     "url": "/contacts",
     "title": "",
     "name": "DeleteContacts",
@@ -1501,182 +1423,6 @@ define({ "api": [
     "groupTitle": "Messages"
   },
   {
-    "type": "post",
-    "url": "/messages",
-    "title": "Request to add a message to a specific chat",
-    "name": "PostMessages",
-    "group": "Messages",
-    "description": "<p>Adds the message from the user associated with the required JWT.</p>",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "string",
-            "optional": false,
-            "field": "authorization",
-            "description": "<p>Valid JSON Web Token JWT</p>"
-          }
-        ]
-      }
-    },
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "number",
-            "optional": false,
-            "field": "chatid",
-            "description": "<p>the id of th chat to insert this message into NOTE: in body, not param</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "message",
-            "description": "<p>a message to store NOTE: in body, not param</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "[]",
-            "optional": false,
-            "field": "message",
-            "description": "<p>an array of messages in json format (need to update with pushy)</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "number",
-            "optional": false,
-            "field": "message.messageid",
-            "description": "<p>the id of the message</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "number",
-            "optional": false,
-            "field": "message.chatid",
-            "description": "<p>the chat id the message bleongs to</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "message.message",
-            "description": "<p>contents of the message</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "number",
-            "optional": false,
-            "field": "message.memberid",
-            "description": "<p>who made the message</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "string",
-            "optional": false,
-            "field": "message.timestamp",
-            "description": "<p>the time the message was sent</p>"
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "400: Unknown user": [
-          {
-            "group": "400: Unknown user",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>&quot;unknown email address&quot;</p>"
-          }
-        ],
-        "400: Missing Parameters": [
-          {
-            "group": "400: Missing Parameters",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>&quot;Missing required information&quot;</p>"
-          }
-        ],
-        "400: SQL Error": [
-          {
-            "group": "400: SQL Error",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>the reported SQL error details</p>"
-          }
-        ],
-        "400: Unknown Chat ID": [
-          {
-            "group": "400: Unknown Chat ID",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>&quot;invalid chat id&quot;</p>"
-          }
-        ]
-      }
-    },
-    "version": "0.0.0",
-    "filename": "routes/weather.js",
-    "groupTitle": "Messages"
-  },
-  {
-    "type": "get",
-    "url": "/weather",
-    "title": "Request a list of Phish.net Blogs",
-    "name": "GetOpenWeatherMapGet",
-    "group": "OpenWeatherMap",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "string",
-            "optional": false,
-            "field": "authorization",
-            "description": "<p>JWT provided from Auth get</p>"
-          }
-        ]
-      }
-    },
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "lat",
-            "description": "<p>location's latitude</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "lon",
-            "description": "<p>location's longitude</p>"
-          }
-        ]
-      }
-    },
-    "description": "<p>This end point is a pass through to the Phish.net API. All parameters will pass on to https://api.openweathermap.org/data/2.5/onecall. See the <a href=\"https://openweathermap.org/api/one-call-api\"> openweathermap.org documentation</a> for a list of optional paramerters and expected results. You do not need a openweathermap.org api key with this endpoint. Enjoy!</p>",
-    "version": "0.0.0",
-    "filename": "routes/weather.js",
-    "groupTitle": "OpenWeatherMap"
-  },
-  {
     "type": "get",
     "url": "/requests",
     "title": "Gets all pending friend requests",
@@ -1750,6 +1496,173 @@ define({ "api": [
     "version": "0.0.0",
     "filename": "routes/verify.js",
     "groupTitle": "Verification"
+  },
+  {
+    "type": "get",
+    "url": "/weather",
+    "title": "Request weather information from OpenWeatherMap.org",
+    "name": "GetOpenWeatherMap",
+    "group": "Weather",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "string",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>JWT provided from Auth get</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "lat",
+            "description": "<p>location's latitude</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "lon",
+            "description": "<p>location's longitude</p>"
+          }
+        ]
+      }
+    },
+    "description": "<p>This end point is a pass through to the Phish.net API. All parameters will pass on to https://api.openweathermap.org/data/2.5/onecall. See the <a href=\"https://openweathermap.org/api/one-call-api\"> openweathermap.org documentation</a> for a list of optional paramerters and expected results. You do not need a openweathermap.org api key with this endpoint. Enjoy!</p>",
+    "version": "0.0.0",
+    "filename": "routes/weather.js",
+    "groupTitle": "Weather"
+  },
+  {
+    "type": "get",
+    "url": "/get",
+    "title": "Gets a list weather locations the user has chosen to save",
+    "description": "<p>Gets a list of weather locations that the user belongs to save and retrieve at a later time</p>",
+    "name": "getLocations",
+    "group": "Weather",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "string",
+            "optional": false,
+            "field": "Bearer",
+            "description": "<p>Token a valid authorization JWT</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Something broke during querying DB</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/weather.js",
+    "groupTitle": "Weather"
+  },
+  {
+    "type": "post",
+    "url": "/",
+    "title": "Adds location to Locations in the weather database",
+    "name": "postWeather",
+    "group": "Weather",
+    "description": "<p>Adds the location from the user associated with the required JWT.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "string",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>Valid JSON Web Token JWT</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "latidude",
+            "description": "<p>of the location to insert location into NOTE: in body, not param</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "longitude",
+            "description": "<p>of the location to insert location into NOTE: in body, not param</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "a",
+            "description": "<p>description of the location NOTE: in body, not param</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "if",
+            "description": "<p>adding to the table was successful</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: Unknown Error": [
+          {
+            "group": "400: Unknown Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;unknown error&quot;</p>"
+          }
+        ],
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the reported SQL error details</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/weather.js",
+    "groupTitle": "Weather"
   },
   {
     "type": "get",

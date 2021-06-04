@@ -589,6 +589,77 @@ define({ "api": [
     "groupTitle": "Auth"
   },
   {
+    "type": "delete",
+    "url": "/chats/chatid/members",
+    "title": "Deletes a user belonging to chatid",
+    "version": "0.0.0",
+    "filename": "routes/chats.js",
+    "group": "C:\\Users\\Bryce Fujita\\Documents\\TCSS450\\TCSS 450 Project\\Team4TCSS450_Backend\\routes\\chats.js",
+    "groupTitle": "C:\\Users\\Bryce Fujita\\Documents\\TCSS450\\TCSS 450 Project\\Team4TCSS450_Backend\\routes\\chats.js",
+    "name": "DeleteChatsChatidMembers"
+  },
+  {
+    "type": "get",
+    "url": "/chats/:chatid",
+    "title": "Selects a list of emails and memberids",
+    "version": "0.0.0",
+    "filename": "routes/chats.js",
+    "group": "C:\\Users\\Bryce Fujita\\Documents\\TCSS450\\TCSS 450 Project\\Team4TCSS450_Backend\\routes\\chats.js",
+    "groupTitle": "C:\\Users\\Bryce Fujita\\Documents\\TCSS450\\TCSS 450 Project\\Team4TCSS450_Backend\\routes\\chats.js",
+    "name": "GetChatsChatid"
+  },
+  {
+    "type": "put",
+    "url": "/chats/chatid/members",
+    "title": "Adds a user to a chat",
+    "version": "0.0.0",
+    "filename": "routes/chats.js",
+    "group": "C:\\Users\\Bryce Fujita\\Documents\\TCSS450\\TCSS 450 Project\\Team4TCSS450_Backend\\routes\\chats.js",
+    "groupTitle": "C:\\Users\\Bryce Fujita\\Documents\\TCSS450\\TCSS 450 Project\\Team4TCSS450_Backend\\routes\\chats.js",
+    "name": "PutChatsChatidMembers"
+  },
+  {
+    "type": "get",
+    "url": "/auth/verification",
+    "title": "send the verification email again",
+    "error": {
+      "fields": {
+        "400: Missing Authorization Header": [
+          {
+            "group": "400: Missing Authorization Header",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Missing Authorization Header&quot;</p>"
+          }
+        ],
+        "400: Malformed Authorization Header": [
+          {
+            "group": "400: Malformed Authorization Header",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Malformed Authorization Header (i.e. username and password)&quot;</p>"
+          }
+        ],
+        "404: User Not Found": [
+          {
+            "group": "404: User Not Found",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;User not found&quot;</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/signin.js",
+    "group": "C:\\Users\\Bryce Fujita\\Documents\\TCSS450\\TCSS 450 Project\\Team4TCSS450_Backend\\routes\\signin.js",
+    "groupTitle": "C:\\Users\\Bryce Fujita\\Documents\\TCSS450\\TCSS 450 Project\\Team4TCSS450_Backend\\routes\\signin.js",
+    "name": "GetAuthVerification"
+  },
+  {
     "type": "post",
     "url": "/chats/",
     "title": "Creates a chat with the given list of users, group name, and owner",
@@ -753,6 +824,142 @@ define({ "api": [
     "groupTitle": "Chats"
   },
   {
+    "type": "get",
+    "url": "/chats/",
+    "title": "Gets a list chats with timestamp and last message that the user belongs to",
+    "description": "<p>Gets a list of chats that the user belongs to by their id as well as the last message sent and the timestamp it was sent</p>",
+    "name": "getChats",
+    "group": "Chats",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "string",
+            "optional": false,
+            "field": "Bearer",
+            "description": "<p>Token a valid authorization JWT</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Something broke during querying DB</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "[]",
+            "optional": false,
+            "field": "chats",
+            "description": "<p>an array of chats in json format</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "chats.chatid",
+            "description": "<p>The id of the chat</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "chats.groupname",
+            "description": "<p>The groupname of the chat</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "chats.lastmessage",
+            "description": "<p>The message text last sent</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "chats.lasttimestamp",
+            "description": "<p>The timestamp of the last message</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/weather.js",
+    "groupTitle": "Chats"
+  },
+  {
+    "type": "get",
+    "url": "/contacts",
+    "title": "",
+    "name": "DeleteContacts",
+    "group": "Contacts",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "the",
+            "description": "<p>memberid to delete</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when contacts are removed from deleter</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: Missing Parameters": [
+          {
+            "group": "400: Missing Parameters",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Malformed SQL Query&quot;</p>"
+          }
+        ],
+        "404: No contacts found": [
+          {
+            "group": "404: No contacts found",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;You have no contacts&quot;</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/connections/contacts.js",
+    "groupTitle": "Contacts"
+  },
+  {
     "type": "post",
     "url": "/request",
     "title": "handles accepting connection requests",
@@ -821,7 +1028,7 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "routes/requests.js",
+    "filename": "routes/connections/requests.js",
     "groupTitle": "Contacts"
   },
   {
@@ -874,9 +1081,9 @@ define({ "api": [
             "description": "<p>&quot;Missing required information&quot;</p>"
           }
         ],
-        "404: No contacts found": [
+        "401: No contacts found": [
           {
-            "group": "404: No contacts found",
+            "group": "401: No contacts found",
             "type": "String",
             "optional": false,
             "field": "message",
@@ -886,7 +1093,65 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "routes/contacts.js",
+    "filename": "routes/connections/contacts.js",
+    "groupTitle": "Contacts"
+  },
+  {
+    "type": "get",
+    "url": "/contactSearch",
+    "title": "",
+    "name": "SearchContacts",
+    "group": "Contacts",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "the",
+            "description": "<p>param to search by (memberID, first/last, email)</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when contact is found</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: Missing Parameters": [
+          {
+            "group": "400: Missing Parameters",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Malformed SQL Query&quot;</p>"
+          }
+        ],
+        "400: No user found": [
+          {
+            "group": "400: No user found",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;You have no contacts&quot;</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/connections/contactSearch.js",
     "groupTitle": "Contacts"
   },
   {
@@ -929,7 +1194,7 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "routes/invites.js",
+    "filename": "routes/connections/invites.js",
     "groupTitle": "Invites"
   },
   {
@@ -981,49 +1246,8 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "routes/invites.js",
+    "filename": "routes/connections/invites.js",
     "groupTitle": "Invites"
-  },
-  {
-    "type": "get",
-    "url": "/auth/verification",
-    "title": "send the verification email again",
-    "error": {
-      "fields": {
-        "400: Missing Authorization Header": [
-          {
-            "group": "400: Missing Authorization Header",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>&quot;Missing Authorization Header&quot;</p>"
-          }
-        ],
-        "400: Malformed Authorization Header": [
-          {
-            "group": "400: Malformed Authorization Header",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>&quot;Malformed Authorization Header (i.e. username and password)&quot;</p>"
-          }
-        ],
-        "404: User Not Found": [
-          {
-            "group": "404: User Not Found",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>&quot;User not found&quot;</p>"
-          }
-        ]
-      }
-    },
-    "version": "0.0.0",
-    "filename": "routes/signin.js",
-    "group": "J:\\CS_Projects\\Javascript\\Team4TCSS450_Backend\\routes\\signin.js",
-    "groupTitle": "J:\\CS_Projects\\Javascript\\Team4TCSS450_Backend\\routes\\signin.js",
-    "name": "GetAuthVerification"
   },
   {
     "type": "get",
@@ -1277,6 +1501,138 @@ define({ "api": [
     "groupTitle": "Messages"
   },
   {
+    "type": "post",
+    "url": "/messages",
+    "title": "Request to add a message to a specific chat",
+    "name": "PostMessages",
+    "group": "Messages",
+    "description": "<p>Adds the message from the user associated with the required JWT.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "string",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>Valid JSON Web Token JWT</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "chatid",
+            "description": "<p>the id of th chat to insert this message into NOTE: in body, not param</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>a message to store NOTE: in body, not param</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "[]",
+            "optional": false,
+            "field": "message",
+            "description": "<p>an array of messages in json format (need to update with pushy)</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "message.messageid",
+            "description": "<p>the id of the message</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "message.chatid",
+            "description": "<p>the chat id the message bleongs to</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "message.message",
+            "description": "<p>contents of the message</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "number",
+            "optional": false,
+            "field": "message.memberid",
+            "description": "<p>who made the message</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "string",
+            "optional": false,
+            "field": "message.timestamp",
+            "description": "<p>the time the message was sent</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: Unknown user": [
+          {
+            "group": "400: Unknown user",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;unknown email address&quot;</p>"
+          }
+        ],
+        "400: Missing Parameters": [
+          {
+            "group": "400: Missing Parameters",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Missing required information&quot;</p>"
+          }
+        ],
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the reported SQL error details</p>"
+          }
+        ],
+        "400: Unknown Chat ID": [
+          {
+            "group": "400: Unknown Chat ID",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;invalid chat id&quot;</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/weather.js",
+    "groupTitle": "Messages"
+  },
+  {
     "type": "get",
     "url": "/weather",
     "title": "Request a list of Phish.net Blogs",
@@ -1322,7 +1678,7 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/requuests",
+    "url": "/requests",
     "title": "Gets all pending friend requests",
     "name": "GetRequests",
     "group": "Requests",
@@ -1334,13 +1690,13 @@ define({ "api": [
             "type": "boolean",
             "optional": false,
             "field": "success",
-            "description": "<p>true when the invite was sent</p>"
+            "description": "<p>true when the requestee list is built</p>"
           }
         ]
       }
     },
     "version": "0.0.0",
-    "filename": "routes/requests.js",
+    "filename": "routes/connections/requests.js",
     "groupTitle": "Requests"
   },
   {
@@ -1394,5 +1750,42 @@ define({ "api": [
     "version": "0.0.0",
     "filename": "routes/verify.js",
     "groupTitle": "Verification"
+  },
+  {
+    "type": "get",
+    "url": "/zipcode",
+    "title": "Request a location based on a zipcode",
+    "name": "Zipcode_to_location",
+    "group": "Zipcodeapi",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "string",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>JWT provided from Auth get</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "zipcode",
+            "description": "<p>zipcode of a given location</p>"
+          }
+        ]
+      }
+    },
+    "description": "<p>This end point is a pass through to the Phish.net API. All parameters will pass on to https://www.zipcodeapi.com/rest/. See the <a href=\"https://www.zipcodeapi.com/API#zipToLoc\"> zipcodeapi.com documentation</a> for a list of optional paramerters and expected results. You do not need a zipcodeapi.com api key with this endpoint. Enjoy!</p>",
+    "version": "0.0.0",
+    "filename": "routes/zipcode.js",
+    "groupTitle": "Zipcodeapi"
   }
 ] });

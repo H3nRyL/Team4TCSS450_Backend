@@ -1669,7 +1669,7 @@ define({ "api": [
     "url": "/zipcode",
     "title": "Request a location based on a zipcode",
     "name": "Zipcode_to_location",
-    "group": "Zipcodeapi",
+    "group": "Zipcode",
     "header": {
       "fields": {
         "Header": [
@@ -1699,6 +1699,6 @@ define({ "api": [
     "description": "<p>This end point is a pass through to the Phish.net API. All parameters will pass on to https://www.zipcodeapi.com/rest/. See the <a href=\"https://www.zipcodeapi.com/API#zipToLoc\"> zipcodeapi.com documentation</a> for a list of optional paramerters and expected results. You do not need a zipcodeapi.com api key with this endpoint. Enjoy!</p>",
     "version": "0.0.0",
     "filename": "routes/zipcode.js",
-    "groupTitle": "Zipcodeapi"
+    "groupTitle": "Zipcode"
   }
 ] });

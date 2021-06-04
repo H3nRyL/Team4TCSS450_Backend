@@ -15,9 +15,9 @@ const request = require('request')
 const router = express.Router()
 
 /**
- * @api {get} /weather Request a list of Phish.net Blogs
- * @apiName GetOpenWeatherMapGet
- * @apiGroup OpenWeatherMap
+ * @api {get} /weather Request weather information from OpenWeatherMap.org
+ * @apiName GetOpenWeatherMap
+ * @apiGroup Weather
  *
  * @apiHeader {string} authorization JWT provided from Auth get
  *
@@ -61,31 +61,23 @@ router.get('/', (req, res) => {
 })
 
 /**
- * @api {post} /messages Request to add a message to a specific chat
- * @apiName PostMessages
- * @apiGroup Messages
+ * @api {post} / Adds location to Locations in the weather database
+ * @apiName postWeather
+ * @apiGroup Weather
  *
- * @apiDescription Adds the message from the user associated with the required JWT.
+ * @apiDescription Adds the location from the user associated with the required JWT.
  *
  * @apiHeader {string} authorization Valid JSON Web Token JWT
  *
- * @apiParam {number} chatid the id of th chat to insert this message into NOTE: in body, not param
- * @apiParam {string} message a message to store NOTE: in body, not param
+ * @apiParam {number} latidude of the location to insert location into NOTE: in body, not param
+ * @apiParam {number} longitude of the location to insert location into NOTE: in body, not param
+ * @apiParam {string} a description of the location NOTE: in body, not param
  *
- * @apiSuccess {[]} message an array of messages in json format (need to update with pushy)
- * @apiSuccess {number} message.messageid the id of the message
- * @apiSuccess {number} message.chatid the chat id the message bleongs to
- * @apiSuccess {string} message.message contents of the message
- * @apiSuccess {number} message.memberid who made the message
- * @apiSuccess {string} message.timestamp the time the message was sent
+ * @apiSuccess {boolean} if adding to the table was successful 
  *
- * @apiError (400: Unknown user) {String} message "unknown email address"
- *
- * @apiError (400: Missing Parameters) {String} message "Missing required information"
- *
+ * @apiError (400: Unknown Error) {String} message "unknown error"
+ * 
  * @apiError (400: SQL Error) {String} message the reported SQL error details
- *
- * @apiError (400: Unknown Chat ID) {String} message "invalid chat id"
  *
  */
 // @apiSuccess (Success 201) {boolean} success true when the name is inserted
@@ -126,21 +118,16 @@ router.post('/', (request, response, next) => {
 
 
 /**
- * @api {get} /chats/ Gets a list chats with timestamp and last message that the user belongs to
+ * @api {get} /get Gets a list weather locations the user has chosen to save
  *
- * @apiDescription Gets a list of chats that the user belongs to
- *                  by their id as well as the last message sent and the timestamp it was sent
+ * @apiDescription Gets a list of weather locations that the user belongs to
+ *                  save and retrieve at a later time
  *
- * @apiName getChats
- * @apiGroup Chats
+ * @apiName getLocations
+ * @apiGroup Weather
  *
  * @apiheader {string} Bearer Token a valid authorization JWT
  * @apiError (400: SQL Error) {string} message Something broke during querying DB
- * @apiSuccess {[]} chats an array of chats in json format
- * @apiSuccess {string} chats.chatid The id of the chat
- * @apiSuccess {string} chats.groupname The groupname of the chat
- * @apiSuccess {string} chats.lastmessage The message text last sent
- * @apiSuccess {string} chats.lasttimestamp The timestamp of the last message
  */
 router.get('/get', (request, response, next) => {
     const values = [request.decoded.memberid]

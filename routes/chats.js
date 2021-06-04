@@ -157,6 +157,8 @@ router.post('/', (request, response, next) => {
 // This does not check if you are a member of the chat
 /**
  * @api {get} /chats/:chatid Selects a list of emails and memberids
+ * @apiName ChatEmailsIds
+ * @apiGroup Chats
  */
 router.get('/:chatid/', (request, response) => {
     const theQuery = 'SELECT DISTINCT Members.memberid, email FROM ChatMembers' +
@@ -170,6 +172,8 @@ router.get('/:chatid/', (request, response) => {
 
 /**
  * @api {delete} /chats/chatid/members Deletes a user belonging to chatid
+ * @apiName DeleteMembers
+ * @apiGroup Chats
  */
 router.delete('/:chatid/members/', (request, response, next) => {
     if (request.query.p && !isNaN(request.query.p)) {
@@ -205,6 +209,9 @@ router.delete('/:chatid/members/', (request, response, next) => {
 
 /**
  * @api {put} /chats/chatid/members Adds a user to a chat
+ * 
+ * @apiName AddMembers
+ * @apiGroup Chats
  */
 router.put('/:chatid/members/', (request, response, next) => {
     if (request.query.p && validateEmail(request.query.p)) {

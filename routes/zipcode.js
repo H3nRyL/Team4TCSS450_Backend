@@ -15,7 +15,7 @@ const router = express.Router()
 /**
  * @api {get} /zipcode Request a location based on a zipcode
  * @apiName Zipcode to location
- * @apiGroup Zipcodeapi
+ * @apiGroup Zipcode
  *
  * @apiHeader {string} authorization JWT provided from Auth get
  *

@@ -1,5 +1,5 @@
 define({
-  "name": "team4tcss450_backende",
+  "name": "team4tcss450_backend",
   "version": "1.0.3",
   "description": "Server for chat applicationn",
   "title": "Gibber API Doc",
@@ -20,7 +20,7 @@ define({
   "apidoc": "0.3.0",
   "generator": {
     "name": "apidoc",
-    "time": "2021-06-04T05:38:27.955Z",
+    "time": "2021-06-04T05:52:38.152Z",
     "url": "https://apidocjs.com",
     "version": "0.28.1"
   }

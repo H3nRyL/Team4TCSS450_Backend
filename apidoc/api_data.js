@@ -389,6 +389,47 @@ define({ "api": [
     "groupTitle": "Auth"
   },
   {
+    "type": "get",
+    "url": "/auth/verification",
+    "title": "send the verification email again",
+    "name": "SendVerification",
+    "group": "Auth",
+    "error": {
+      "fields": {
+        "400: Missing Authorization Header": [
+          {
+            "group": "400: Missing Authorization Header",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Missing Authorization Header&quot;</p>"
+          }
+        ],
+        "400: Malformed Authorization Header": [
+          {
+            "group": "400: Malformed Authorization Header",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Malformed Authorization Header (i.e. username and password)&quot;</p>"
+          }
+        ],
+        "404: User Not Found": [
+          {
+            "group": "404: User Not Found",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;User not found&quot;</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/signin.js",
+    "groupTitle": "Auth"
+  },
+  {
     "type": "put",
     "url": "/auth/changePassword",
     "title": "Request to change password",
@@ -589,75 +630,34 @@ define({ "api": [
     "groupTitle": "Auth"
   },
   {
-    "type": "delete",
+    "type": "put",
     "url": "/chats/chatid/members",
-    "title": "Deletes a user belonging to chatid",
+    "title": "Adds a user to a chat",
+    "name": "AddMembers",
+    "group": "Chats",
     "version": "0.0.0",
     "filename": "routes/chats.js",
-    "group": "C:\\Users\\Bryce Fujita\\Documents\\TCSS450\\TCSS 450 Project\\Team4TCSS450_Backend\\routes\\chats.js",
-    "groupTitle": "C:\\Users\\Bryce Fujita\\Documents\\TCSS450\\TCSS 450 Project\\Team4TCSS450_Backend\\routes\\chats.js",
-    "name": "DeleteChatsChatidMembers"
+    "groupTitle": "Chats"
   },
   {
     "type": "get",
     "url": "/chats/:chatid",
     "title": "Selects a list of emails and memberids",
+    "name": "ChatEmailsIds",
+    "group": "Chats",
     "version": "0.0.0",
     "filename": "routes/chats.js",
-    "group": "C:\\Users\\Bryce Fujita\\Documents\\TCSS450\\TCSS 450 Project\\Team4TCSS450_Backend\\routes\\chats.js",
-    "groupTitle": "C:\\Users\\Bryce Fujita\\Documents\\TCSS450\\TCSS 450 Project\\Team4TCSS450_Backend\\routes\\chats.js",
-    "name": "GetChatsChatid"
+    "groupTitle": "Chats"
   },
   {
-    "type": "put",
+    "type": "delete",
     "url": "/chats/chatid/members",
-    "title": "Adds a user to a chat",
+    "title": "Deletes a user belonging to chatid",
+    "name": "DeleteMembers",
+    "group": "Chats",
     "version": "0.0.0",
     "filename": "routes/chats.js",
-    "group": "C:\\Users\\Bryce Fujita\\Documents\\TCSS450\\TCSS 450 Project\\Team4TCSS450_Backend\\routes\\chats.js",
-    "groupTitle": "C:\\Users\\Bryce Fujita\\Documents\\TCSS450\\TCSS 450 Project\\Team4TCSS450_Backend\\routes\\chats.js",
-    "name": "PutChatsChatidMembers"
-  },
-  {
-    "type": "get",
-    "url": "/auth/verification",
-    "title": "send the verification email again",
-    "error": {
-      "fields": {
-        "400: Missing Authorization Header": [
-          {
-            "group": "400: Missing Authorization Header",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>&quot;Missing Authorization Header&quot;</p>"
-          }
-        ],
-        "400: Malformed Authorization Header": [
-          {
-            "group": "400: Malformed Authorization Header",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>&quot;Malformed Authorization Header (i.e. username and password)&quot;</p>"
-          }
-        ],
-        "404: User Not Found": [
-          {
-            "group": "404: User Not Found",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>&quot;User not found&quot;</p>"
-          }
-        ]
-      }
-    },
-    "version": "0.0.0",
-    "filename": "routes/signin.js",
-    "group": "C:\\Users\\Bryce Fujita\\Documents\\TCSS450\\TCSS 450 Project\\Team4TCSS450_Backend\\routes\\signin.js",
-    "groupTitle": "C:\\Users\\Bryce Fujita\\Documents\\TCSS450\\TCSS 450 Project\\Team4TCSS450_Backend\\routes\\signin.js",
-    "name": "GetAuthVerification"
+    "groupTitle": "Chats"
   },
   {
     "type": "post",

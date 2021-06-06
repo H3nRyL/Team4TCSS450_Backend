@@ -4,6 +4,8 @@
 // express is the framework we're going to use to handle requests
 const express = require('express')
 
+const notifyOthers = require('../../utilities/exports').messaging
+
 // Access the connection to Heroku Database
 const pool = require('../../utilities/exports').pool
 const router = express.Router()
@@ -44,7 +46,7 @@ router.post('/',
     },
     // Creates a contact request by making member id a and b a entry
     // but with verified (indicator of they're connected) to 0
-    (request, response) => {
+    (request, response, next) => {
         const userid = request.decoded.memberid
         const inviteeid = request.body.inviteeid
 
@@ -57,14 +59,33 @@ router.post('/',
                     response.status(200).send({
                         message: `Invite has been sent to ${inviteeid}`,
                     })
+                    next()
                 }
             })
             .catch((error) => {
                 response.status(402).send({message:
                     'You have already invited this user or are already contacts', error})
             })
-    },
+    }, 
+    (request, response) => {
+        // send a notification of the invite to the member with registered tokens
+        const query = `SELECT token FROM Push_Token WHERE memberid=$1`
+        const values = [request.body.inviteeid]
+        pool.query(query, values)
+            .then((result) => {
+                notifyOthers.sendInviteToIndividual(result.rows[0].token)
+                response.send({
+                    success: true,
+                })
+            }).catch((err) => {
+                response.status(400).send({
+                    message: 'SQL Error on select from push token',
+                    error: err,
+                })
+            })
+    }
 )
+
 /**
  * @api {get} /invites Gets all possible users that member is not friends with
  * @apiName GetInvite

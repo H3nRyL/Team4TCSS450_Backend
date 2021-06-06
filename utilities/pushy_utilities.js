@@ -58,8 +58,32 @@ function sendChatCreationToIndividual(token, groupname) {
     })
 }
 
+/**
+ * use to send invite to a specific client by the token
+ *
+ * @param {string} token token associated
+ */
+function sendInviteToIndividual(token) {
+    // build the message for Pushy to send
+    const data = {
+        'type': 'invite',
+    }
+
+    // Send push notification via the Send Notifications API
+    // https://pushy.me/docs/api/send-notifications
+    pushyAPI.sendPushNotification(data, token, {}, function(err, id) {
+        // Log errors to console
+        if (err) {
+            return console.log('Fatal Error', err)
+        }
+
+        // Log success
+        console.log('Push sent successfully for invite! (ID: ' + id + ')')
+    })
+}
+
 // add other "sendTypeToIndividual" functions here. Don't forget to export them
 
 module.exports = {
-    sendMessageToIndividual, sendChatCreationToIndividual,
+    sendMessageToIndividual, sendChatCreationToIndividual, sendInviteToIndividual,
 }

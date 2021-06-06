@@ -41,7 +41,7 @@ function validatePassword(potentialPassword) {
  * @param {string} password password to check
  * @return {boolean} true if the password is correct
  */
- function checkPasswordSalt(salt, saltedHashedPassword, password) {
+function checkPasswordSalt(salt, saltedHashedPassword, password) {
     // Generate a hash based on the stored salt and the provided password
     const providedSaltedHash = generateHash(password, salt)
     // Did our salted hash match their salted hash?

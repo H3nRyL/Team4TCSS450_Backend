@@ -46,7 +46,8 @@ function sendVerificationEmail(receiver, jwt) {
  *
  */
 function sendResetEmail(receiver, code) {
-    sendEmail(process.env.SENDER_EMAIL, process.env.SENDER_PW, receiver, 'Reset Code', code + '', code + '')
+    sendEmail(process.env.SENDER_EMAIL, process.env.SENDER_PW, receiver,
+              'Reset Code', code + '', code + '')
 }
 
 /**

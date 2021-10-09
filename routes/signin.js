@@ -148,6 +148,10 @@ router.get('/',
 
 /**
  * @api {get} /auth/verification send the verification email again
+ * 
+ * @apiName SendVerification
+ * 
+ * @apiGroup Auth
  *
  * @apiError (400: Missing Authorization Header) {String} message "Missing Authorization Header"
  *

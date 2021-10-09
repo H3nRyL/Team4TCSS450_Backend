@@ -18,6 +18,8 @@ CREATE TABLE Contacts(PrimaryKey SERIAL PRIMARY KEY,
                       FOREIGN KEY(MemberID_B) REFERENCES Members(MemberID)
 );
 
+-- CREATE UNIQUE INDEX CompContact on Contacts(greatest(MemberID_A, MemberID_B), least(MemberID_A, MemberID_B));
+
 DROP TABLE IF EXISTS Chats;
 CREATE TABLE Chats (ChatID SERIAL PRIMARY KEY,
                     OwnerID INT NOT NULL,
@@ -31,6 +33,8 @@ CREATE TABLE ChatMembers (ChatID INT NOT NULL,
                           FOREIGN KEY(MemberID) REFERENCES Members(MemberID),
                           FOREIGN KEY(ChatID) REFERENCES Chats(ChatID)
 );
+
+CREATE UNIQUE Index CompositeChatMembers ON ChatMembers(greatest(chatid, memberid), least(chatid, memberid));
 
 DROP TABLE IF EXISTS Messages;
 CREATE TABLE Messages (PrimaryKey SERIAL PRIMARY KEY,
@@ -50,12 +54,6 @@ CREATE TABLE Locations (PrimaryKey SERIAL PRIMARY KEY,
                         Long DECIMAL,
                         ZIP INT,
                         FOREIGN KEY(MemberID) REFERENCES Members(MemberID)
-);
-
-DROP TABLE IF EXISTS Demo;
-CREATE TABLE Demo (DemoID SERIAL PRIMARY KEY,
-                        Name VARCHAR(255) NOT NULL UNIQUE,
-                        Message VARCHAR(255)
 );
 
 

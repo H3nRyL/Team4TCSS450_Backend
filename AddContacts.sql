@@ -1,11 +1,4 @@
-INSERT INTO Contacts (MemberID_A, MemberID_B, Verified) VALUES (27,26,1);
-INSERT INTO Contacts (MemberID_A, MemberID_B, Verified) VALUES (27,19,1);
-INSERT INTO Contacts (MemberID_A, MemberID_B, Verified) VALUES (27,21,1);
-INSERT INTO Contacts (MemberID_A, MemberID_B, Verified) VALUES (27,21,1);
-INSERT INTO Contacts (MemberID_A, MemberID_B, Verified) VALUES (27,22,1);
-INSERT INTO Contacts (MemberID_A, MemberID_B, Verified) VALUES (27,23,1);
-INSERT INTO Contacts (MemberID_A, MemberID_B, Verified) VALUES (27,44,1);
-INSERT INTO Contacts (MemberID_A, MemberID_B, Verified) VALUES (27,28,1);
-INSERT INTO Contacts (MemberID_A, MemberID_B, Verified) VALUES (27,31,1);
-INSERT INTO Contacts (MemberID_A, MemberID_B, Verified) VALUES (27,34,1);
-INSERT INTO Contacts (MemberID_A, MemberID_B, Verified) VALUES (27,35,1);
+INSERT INTO Contacts (MemberID_A, MemberID_B, Verified) VALUES (143,138,0);
+INSERT INTO Contacts (MemberID_A, MemberID_B, Verified) VALUES (79,138,0);
+INSERT INTO Contacts (MemberID_A, MemberID_B, Verified) VALUES (44,138,0);
+INSERT INTO Contacts (MemberID_A, MemberID_B, Verified) VALUES (38,138,0);

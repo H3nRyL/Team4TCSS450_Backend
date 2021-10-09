@@ -3,6 +3,8 @@ const express = require('express')
 // Access the connection to Heroku Database
 const pool = require('../utilities').pool
 
+const notifyOthers = require('../utilities/exports').messaging
+
 const {validation} = require('../utilities')
 const isStringProvided = validation.isStringProvided
 const msg_functions = require('../utilities/exports').messaging
@@ -54,11 +56,10 @@ router.post('/', (request, response, next) => {
 }, (request, response, next) => {
     // validate chat id exists
     const query = 'SELECT * FROM CHATS WHERE ChatId=$1'
-    const values = [request.body.chatid]
-
-    pool.query(query, values)
+    console.log(request.body.chatid)
+    pool.query(query, [request.body.chatid])
         .then((result) => {
-            if (result.rowCount == 0) {
+            if (result.rowCount === 0) {
                 response.status(404).send({
                     message: 'Chat ID not found',
                 })
@@ -74,6 +75,8 @@ router.post('/', (request, response, next) => {
 }, (request, response, next) => {
     // validate memberid exists in the chat
     const query = 'SELECT * FROM ChatMembers WHERE ChatId=$1 AND MemberId=$2'
+    console.log(request.body.chatid)
+    console.log(request.decoded.memberid)
     const values = [request.body.chatid, request.decoded.memberid]
     pool.query(query, values)
         .then((result) => {
@@ -94,7 +97,8 @@ router.post('/', (request, response, next) => {
     // add the message to the database
     const insert = `INSERT INTO Messages(ChatId, Message, MemberId)
                   VALUES($1, $2, $3) 
-                  RETURNING PrimaryKey AS MessageId, ChatId, Message, MemberId, TimeStamp`
+                  RETURNING PrimaryKey AS MessageId, ChatId, Message, MemberId, to_char(Messages.Timestamp AT TIME ZONE 'PDT', 
+                  'YYYY-MM-DD HH24:MI:SS.US') AS TimeStamp`
     const values = [request.body.chatid, request.body.message, request.decoded.memberid]
     pool.query(insert, values)
         .then((result) => {
@@ -127,7 +131,7 @@ router.post('/', (request, response, next) => {
             console.log(request.decoded.email)
             console.log(request.body.message)
             result.rows.forEach((entry) =>
-                msg_functions.sendMessageToIndividual(
+                notifyOthers.sendMessageToIndividual(
                     entry.token,
                     response.message))
             response.send({
@@ -183,6 +187,7 @@ router.get('/:chatid?/:messageId?', (request, response, next) => {
         next()
     }
 }, (request, response, next) => {
+    console.log(request.params.chatid)
     // validate that the ChatId exists
     const query = 'SELECT * FROM CHATS WHERE ChatId=$1'
     const values = [request.params.chatid]

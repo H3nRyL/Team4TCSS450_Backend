@@ -22,15 +22,19 @@ app.use(middleware.jsonErrorInBody)
 app.use('/auth', require('./routes/register'))
 app.use('/auth', require('./routes/signin'))
 app.use('/auth', require('./routes/password'))
+app.use('/auth', middleware.checkToken, require('./routes/pushyregister.js'))
 app.use('/verification', require('./routes/verify'))
+
 app.use('/chats', middleware.checkToken, require('./routes/chats'))
-
-app.use('/contacts', middleware.checkToken, require('./routes/contacts'))
-app.use('/invites', middleware.checkToken, require('./routes/invites'))
-app.use('/requests', middleware.checkToken, require('./routes/requests'))
-
 app.use('/messages', middleware.checkToken, require('./routes/messages'))
+
+app.use('/contacts', middleware.checkToken, require('./routes/connections/contacts'))
+app.use('/invites', middleware.checkToken, require('./routes/connections/invites'))
+app.use('/requests', middleware.checkToken, require('./routes/connections/requests'))
+app.use('/contactSearch', middleware.checkToken, require('./routes/connections/contactSearch'))
+
 app.use('/weather', middleware.checkToken, require('./routes/weather'))
+app.use('/zipcode', middleware.checkToken, require('./routes/zipcode'))
 
 app.use('/auth', middleware.checkToken, require('./routes/pushyregister'))
 

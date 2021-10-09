@@ -1,5 +1,81 @@
 define({ "api": [
   {
+    "type": "delete",
+    "url": "/auth",
+    "title": "Request to delete a Pushy Token for the user",
+    "name": "DeleteAuth",
+    "group": "Auth",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "string",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>Valid JSON Web Token JWT</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when the pushy token is deleted</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: Missing Parameters": [
+          {
+            "group": "400: Missing Parameters",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Missing required information&quot;</p>"
+          }
+        ],
+        "404: User Not Found": [
+          {
+            "group": "404: User Not Found",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;user not found&quot;</p>"
+          }
+        ],
+        "400: JSON Error": [
+          {
+            "group": "400: JSON Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;malformed JSON in parameters&quot;</p>"
+          }
+        ],
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the reported SQL error details</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/pushyregister.js",
+    "groupTitle": "Auth"
+  },
+  {
     "type": "get",
     "url": "/auth",
     "title": "Request to sign a user in the system",
@@ -225,6 +301,136 @@ define({ "api": [
   },
   {
     "type": "put",
+    "url": "/auth",
+    "title": "Request to insert a Pushy Token for the user",
+    "name": "PutAuth",
+    "group": "Auth",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "string",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>Valid JSON Web Token JWT</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "token",
+            "description": "<p>the Pushy Token of the user identified in the JWT</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when the pushy token is inserted</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: Missing Parameters": [
+          {
+            "group": "400: Missing Parameters",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Missing required information&quot;</p>"
+          }
+        ],
+        "404: User Not Found": [
+          {
+            "group": "404: User Not Found",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;user not found&quot;</p>"
+          }
+        ],
+        "400: JSON Error": [
+          {
+            "group": "400: JSON Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;malformed JSON in parameters&quot;</p>"
+          }
+        ],
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the reported SQL error details</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/pushyregister.js",
+    "groupTitle": "Auth"
+  },
+  {
+    "type": "get",
+    "url": "/auth/verification",
+    "title": "send the verification email again",
+    "name": "SendVerification",
+    "group": "Auth",
+    "error": {
+      "fields": {
+        "400: Missing Authorization Header": [
+          {
+            "group": "400: Missing Authorization Header",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Missing Authorization Header&quot;</p>"
+          }
+        ],
+        "400: Malformed Authorization Header": [
+          {
+            "group": "400: Malformed Authorization Header",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Malformed Authorization Header (i.e. username and password)&quot;</p>"
+          }
+        ],
+        "404: User Not Found": [
+          {
+            "group": "404: User Not Found",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;User not found&quot;</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/signin.js",
+    "groupTitle": "Auth"
+  },
+  {
+    "type": "put",
     "url": "/auth/changePassword",
     "title": "Request to change password",
     "name": "changePass",
@@ -298,7 +504,7 @@ define({ "api": [
     "groupTitle": "Auth"
   },
   {
-    "type": "get",
+    "type": "post",
     "url": "/auth/resetPassword",
     "title": "Change the password if forgotten, sends email with code",
     "name": "resetPass_Pt._1",
@@ -422,6 +628,36 @@ define({ "api": [
     "version": "0.0.0",
     "filename": "routes/password.js",
     "groupTitle": "Auth"
+  },
+  {
+    "type": "put",
+    "url": "/chats/chatid/members",
+    "title": "Adds a user to a chat",
+    "name": "AddMembers",
+    "group": "Chats",
+    "version": "0.0.0",
+    "filename": "routes/chats.js",
+    "groupTitle": "Chats"
+  },
+  {
+    "type": "get",
+    "url": "/chats/:chatid",
+    "title": "Selects a list of emails and memberids",
+    "name": "ChatEmailsIds",
+    "group": "Chats",
+    "version": "0.0.0",
+    "filename": "routes/chats.js",
+    "groupTitle": "Chats"
+  },
+  {
+    "type": "delete",
+    "url": "/chats/chatid/members",
+    "title": "Deletes a user belonging to chatid",
+    "name": "DeleteMembers",
+    "group": "Chats",
+    "version": "0.0.0",
+    "filename": "routes/chats.js",
+    "groupTitle": "Chats"
   },
   {
     "type": "post",
@@ -591,6 +827,136 @@ define({ "api": [
     "type": "get",
     "url": "/contacts",
     "title": "",
+    "name": "DeleteContacts",
+    "group": "Contacts",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "the",
+            "description": "<p>memberid to delete</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when contacts are removed from deleter</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: Missing Parameters": [
+          {
+            "group": "400: Missing Parameters",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Malformed SQL Query&quot;</p>"
+          }
+        ],
+        "404: No contacts found": [
+          {
+            "group": "404: No contacts found",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;You have no contacts&quot;</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/connections/contacts.js",
+    "groupTitle": "Contacts"
+  },
+  {
+    "type": "post",
+    "url": "/request",
+    "title": "handles accepting connection requests",
+    "name": "FriendRequest",
+    "group": "Contacts",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "int",
+            "optional": false,
+            "field": "the",
+            "description": "<p>contact id that invited you</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 201": [
+          {
+            "group": "Success 201",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when you accepted their invite</p>"
+          },
+          {
+            "group": "Success 201",
+            "type": "String",
+            "optional": false,
+            "field": "email",
+            "description": "<p>the email of the user inserted</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: Missing Parameters": [
+          {
+            "group": "400: Missing Parameters",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Missing required information&quot;</p>"
+          }
+        ],
+        "400: Other Error": [
+          {
+            "group": "400: Other Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;other error, see detail&quot;</p>"
+          },
+          {
+            "group": "400: Other Error",
+            "type": "String",
+            "optional": false,
+            "field": "detail",
+            "description": "<p>Information about th error</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/connections/requests.js",
+    "groupTitle": "Contacts"
+  },
+  {
+    "type": "get",
+    "url": "/contacts",
+    "title": "",
     "name": "GetContacts",
     "group": "Contacts",
     "parameter": {
@@ -614,14 +980,14 @@ define({ "api": [
             "type": "boolean",
             "optional": false,
             "field": "success",
-            "description": "<p>true when the name is inserted</p>"
+            "description": "<p>true when contacts are returned</p>"
           },
           {
             "group": "Success 201",
-            "type": "String",
+            "type": "JSONArray",
             "optional": false,
-            "field": "email",
-            "description": "<p>the email of the user inserted</p>"
+            "field": "JSON",
+            "description": "<p>object with all of the contact information</p>"
           }
         ]
       }
@@ -637,9 +1003,9 @@ define({ "api": [
             "description": "<p>&quot;Missing required information&quot;</p>"
           }
         ],
-        "404: No contacts found": [
+        "401: No contacts found": [
           {
-            "group": "404: No contacts found",
+            "group": "401: No contacts found",
             "type": "String",
             "optional": false,
             "field": "message",
@@ -649,49 +1015,161 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "routes/contacts.js",
+    "filename": "routes/connections/contacts.js",
     "groupTitle": "Contacts"
   },
   {
     "type": "get",
-    "url": "/auth/verification",
-    "title": "send the verification email again",
+    "url": "/contactSearch",
+    "title": "",
+    "name": "SearchContacts",
+    "group": "Contacts",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "the",
+            "description": "<p>param to search by (memberID, first/last, email)</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when contact is found</p>"
+          }
+        ]
+      }
+    },
     "error": {
       "fields": {
-        "400: Missing Authorization Header": [
+        "400: Missing Parameters": [
           {
-            "group": "400: Missing Authorization Header",
+            "group": "400: Missing Parameters",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>&quot;Missing Authorization Header&quot;</p>"
+            "description": "<p>&quot;Malformed SQL Query&quot;</p>"
           }
         ],
-        "400: Malformed Authorization Header": [
+        "400: No user found": [
           {
-            "group": "400: Malformed Authorization Header",
+            "group": "400: No user found",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>&quot;Malformed Authorization Header (i.e. username and password)&quot;</p>"
-          }
-        ],
-        "404: User Not Found": [
-          {
-            "group": "404: User Not Found",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>&quot;User not found&quot;</p>"
+            "description": "<p>&quot;You have no contacts&quot;</p>"
           }
         ]
       }
     },
     "version": "0.0.0",
-    "filename": "routes/signin.js",
-    "group": "J:\\CS_Projects\\Javascript\\Team4TCSS450_Backend\\routes\\signin.js",
-    "groupTitle": "J:\\CS_Projects\\Javascript\\Team4TCSS450_Backend\\routes\\signin.js",
-    "name": "GetAuthVerification"
+    "filename": "routes/connections/contactSearch.js",
+    "groupTitle": "Contacts"
+  },
+  {
+    "type": "get",
+    "url": "/invites",
+    "title": "Gets all possible users that member is not friends with",
+    "name": "GetInvite",
+    "group": "Invites",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "memberid_a",
+            "description": "<p>the memberID of the requester</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "memberid_b",
+            "description": "<p>the memberID of the user receiving the request</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when the invite was sent</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/connections/invites.js",
+    "groupTitle": "Invites"
+  },
+  {
+    "type": "post",
+    "url": "/invites",
+    "title": "Request to send an invite to another user",
+    "name": "PostInvite",
+    "group": "Invites",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "memberid_a",
+            "description": "<p>the memberID of the requester</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "memberid_b",
+            "description": "<p>the memberID of the user receiving the request</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 201": [
+          {
+            "group": "Success 201",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when the invite was sent</p>"
+          }
+        ],
+        "Success 202": [
+          {
+            "group": "Success 202",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>when the other users contact list is updated as well</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/connections/invites.js",
+    "groupTitle": "Invites"
   },
   {
     "type": "get",
@@ -946,47 +1424,26 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/weather",
-    "title": "Request a list of Phish.net Blogs",
-    "name": "GetOpenWeatherMapGet",
-    "group": "OpenWeatherMap",
-    "header": {
+    "url": "/requests",
+    "title": "Gets all pending friend requests",
+    "name": "GetRequests",
+    "group": "Requests",
+    "success": {
       "fields": {
-        "Header": [
+        "Success 200": [
           {
-            "group": "Header",
-            "type": "string",
+            "group": "Success 200",
+            "type": "boolean",
             "optional": false,
-            "field": "authorization",
-            "description": "<p>JWT provided from Auth get</p>"
+            "field": "success",
+            "description": "<p>true when the requestee list is built</p>"
           }
         ]
       }
     },
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "lat",
-            "description": "<p>location's latitude</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "string",
-            "optional": false,
-            "field": "lon",
-            "description": "<p>location's longitude</p>"
-          }
-        ]
-      }
-    },
-    "description": "<p>This end point is a pass through to the Phish.net API. All parameters will pass on to https://api.openweathermap.org/data/2.5/onecall. See the <a href=\"https://openweathermap.org/api/one-call-api\"> openweathermap.org documentation</a> for a list of optional paramerters and expected results. You do not need a openweathermap.org api key with this endpoint. Enjoy!</p>",
     "version": "0.0.0",
-    "filename": "routes/weather.js",
-    "groupTitle": "OpenWeatherMap"
+    "filename": "routes/connections/requests.js",
+    "groupTitle": "Requests"
   },
   {
     "type": "get",
@@ -1039,5 +1496,209 @@ define({ "api": [
     "version": "0.0.0",
     "filename": "routes/verify.js",
     "groupTitle": "Verification"
+  },
+  {
+    "type": "get",
+    "url": "/weather",
+    "title": "Request weather information from OpenWeatherMap.org",
+    "name": "GetOpenWeatherMap",
+    "group": "Weather",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "string",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>JWT provided from Auth get</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "lat",
+            "description": "<p>location's latitude</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "lon",
+            "description": "<p>location's longitude</p>"
+          }
+        ]
+      }
+    },
+    "description": "<p>This end point is a pass through to the Phish.net API. All parameters will pass on to https://api.openweathermap.org/data/2.5/onecall. See the <a href=\"https://openweathermap.org/api/one-call-api\"> openweathermap.org documentation</a> for a list of optional paramerters and expected results. You do not need a openweathermap.org api key with this endpoint. Enjoy!</p>",
+    "version": "0.0.0",
+    "filename": "routes/weather.js",
+    "groupTitle": "Weather"
+  },
+  {
+    "type": "get",
+    "url": "/get",
+    "title": "Gets a list weather locations the user has chosen to save",
+    "description": "<p>Gets a list of weather locations that the user belongs to save and retrieve at a later time</p>",
+    "name": "getLocations",
+    "group": "Weather",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "string",
+            "optional": false,
+            "field": "Bearer",
+            "description": "<p>Token a valid authorization JWT</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "string",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Something broke during querying DB</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/weather.js",
+    "groupTitle": "Weather"
+  },
+  {
+    "type": "post",
+    "url": "/",
+    "title": "Adds location to Locations in the weather database",
+    "name": "postWeather",
+    "group": "Weather",
+    "description": "<p>Adds the location from the user associated with the required JWT.</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "string",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>Valid JSON Web Token JWT</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "latidude",
+            "description": "<p>of the location to insert location into NOTE: in body, not param</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "number",
+            "optional": false,
+            "field": "longitude",
+            "description": "<p>of the location to insert location into NOTE: in body, not param</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "a",
+            "description": "<p>description of the location NOTE: in body, not param</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "if",
+            "description": "<p>adding to the table was successful</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: Unknown Error": [
+          {
+            "group": "400: Unknown Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;unknown error&quot;</p>"
+          }
+        ],
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the reported SQL error details</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/weather.js",
+    "groupTitle": "Weather"
+  },
+  {
+    "type": "get",
+    "url": "/zipcode",
+    "title": "Request a location based on a zipcode",
+    "name": "Zipcode_to_location",
+    "group": "Zipcode",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "string",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>JWT provided from Auth get</p>"
+          }
+        ]
+      }
+    },
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "zipcode",
+            "description": "<p>zipcode of a given location</p>"
+          }
+        ]
+      }
+    },
+    "description": "<p>This end point is a pass through to the zipcodeapi.com API. All parameters will pass on to https://www.zipcodeapi.com/rest/. See the <a href=\"https://www.zipcodeapi.com/API#zipToLoc\"> zipcodeapi.com documentation</a> for a list of optional paramerters and expected results. You do not need a zipcodeapi.com api key with this endpoint. Enjoy!</p>",
+    "version": "0.0.0",
+    "filename": "routes/zipcode.js",
+    "groupTitle": "Zipcode"
   }
 ] });

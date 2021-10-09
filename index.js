@@ -36,6 +36,8 @@ app.use('/contactSearch', middleware.checkToken, require('./routes/connections/c
 app.use('/weather', middleware.checkToken, require('./routes/weather'))
 app.use('/zipcode', middleware.checkToken, require('./routes/zipcode'))
 
+app.use('/auth', middleware.checkToken, require('./routes/pushyregister'))
+
 app.use('/doc', express.static('apidoc'))
 
 /*
